@@ -1,0 +1,77 @@
+/*******************************************************
+ *                                                     *
+ *  srt: Sushi RayTracer                               *
+ *                                                     *
+ *  CAMERA CLASS FILE                                  *
+ *                                                     *
+ *  Giulio Auriemma                                    *
+ *                                                     *
+ *******************************************************/
+#include "Camera.hpp"
+
+// Other system includes.
+#include <math.h>
+#include <iostream>
+
+// My other includes.
+#include "utility/Randomizer.hpp"
+
+using namespace srt::geometry;
+using namespace srt::utility;
+
+namespace srt{
+    /**
+     * @brief Builds a camera.
+     * 
+     * @param lookFrom - The origin of the camera.
+     * @param lookAt - The point the camera is pointing. 
+     * @param up - The world up vector.
+     * @param vfov - The focal distance.
+     * @param aspect - The aspect ratio (width / height).
+     * @param aperture - The lens ray from which shot the ray.
+     * @param focusDist - The distance of the focus.
+     * @param t0 - The time the camera starts to "record". It must be greater than 0, otherwise it will be set to 0.
+     * @parma t1 - The time the camera stops to "record". It must be greater than t1, otherwise it will be set to t1.
+     */
+    Camera::Camera(const Vec3 &lookFrom, const Vec3 &lookAt, const Vec3 &up, const float vfov, 
+            const float aspect, const float aperture, const float focusDist, const float t0, const float t1) : 
+            origin(lookFrom), aperture(aperture / 2), t0(t0 > 0 ? t0 : 0), t1(t1 > t0 ? t1 : t0){
+        Vec3 w = (lookFrom - lookAt).normalize();
+        this->u = up.cross(w).normalize();
+        this->v = w.cross(this->u).normalize();
+        float theta = vfov * M_PI / 180.;
+        float half_height = tan(theta / 2);
+        float half_width = aspect * half_height;
+
+        this->lower_left_corner = this->origin - half_width * focusDist * this->u - 
+                                    half_height * focusDist * this->v - w * focusDist;
+        this->horizontal = 2 * half_width * focusDist * this->u;
+        this->vertical = 2 * half_height * focusDist * this->v;
+    }
+
+    /**
+     * @brief Returns the ray from the camera to the scene.
+     * 
+     * @param s - The horizontal offset.
+     * @param t - The vertical offset.
+     * @return Ray - The ray from the camera to the scene.
+     */
+    Ray Camera::get_ray(const float s, const float t){
+        Vec3 start = this->aperture * Randomizer::randomInUnitSphere();
+        Vec3 offset = this->u * start.x() + this->v * start.y();
+        float time = Randomizer::randomRange(this->t0, this->t1);
+        return {this->origin + offset, this->lower_left_corner + s * this->horizontal + t * this->vertical - origin - offset, time};
+    }
+
+    /**
+     * @brief Set the new camera time. If t0 is negative, it will not be changed. 
+     *        If t1 is less than t0, it will not be changed.
+     * 
+     * @param t0 - The start time. 
+     * @param t1 - The end time.
+     */
+    void Camera::setTime(const float t0, const float t1){
+        if(t0 >= 0)   this->t0 = t0;
+        if(t1 >= 1)   this->t1 = t1;
+    }
+}

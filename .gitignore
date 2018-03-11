@@ -1,0 +1,66 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+
+# My ignore
+src/srt/paths.h
+
+example/parse_scene_old.hpp
+example/test.cpp
+example/test
+
+files/test.ppm
+files/random.ppm
+files/random (copy 1).ppm
+files/scenes/*
+!files/scenes/test.json
+
+.vscode/
+
+build/
+build_debug/
+
+docs/latex/
+
+# Shape not ready yet
+src/srt/geometry/shapes/Circle.cpp
+src/srt/geometry/shapes/Circle.hpp
+src/srt/geometry/shapes/Rectangle.cpp
+src/srt/geometry/shapes/Rectangle.hpp
+
+# Light
+src/srt/illumination
+
+# Utility
+src/srt/utility/Logger.hpp
+src/srt/utility/Logger.cpp
