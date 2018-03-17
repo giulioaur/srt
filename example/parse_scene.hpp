@@ -3,6 +3,7 @@
 #include "../src/srt/geometry/shapes/Circle.hpp"
 #include "../src/srt/geometry/shapes/Sphere.hpp"
 #include "../src/srt/geometry/shapes/Rectangle.hpp"
+#include "../src/srt/textures/StaticTexture.hpp"
 #include "../src/srt/materials/Lambertian.hpp"
 #include "../src/srt/materials/Metal.hpp"
 #include "../src/srt/materials/Dielectric.hpp"
@@ -14,6 +15,7 @@ using namespace srt;
 using namespace srt::geometry;
 using namespace srt::geometry::shapes;
 using namespace srt::illumination::lights;
+using namespace srt::textures;
 using namespace srt::materials;
 
 Scene build_scenes(const string &file);
@@ -110,7 +112,7 @@ shared_ptr<Material> parse_material(const json::value_type &materialToParse){
 
     if(type == "lambertian"){
         vector<float> albedo = materialToParse["albedo"];
-        material = shared_ptr<Material>(new Lambertian{Vec3{albedo}});
+        material = shared_ptr<Material>(new Lambertian{shared_ptr<Texture>{new StaticTexture{albedo}}});
     }
     else if(type == "metal"){
         vector<float> albedo = materialToParse["albedo"];

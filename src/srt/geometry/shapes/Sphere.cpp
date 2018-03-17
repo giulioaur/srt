@@ -12,9 +12,6 @@
 // System includes.
 #include <cmath>
 
-// #todelete
-#include <iostream>
-
 using namespace std;
 using namespace srt::geometry;
 using namespace srt::materials;
@@ -40,6 +37,22 @@ namespace shapes{
      * @param old - The old sphere.
      */
     Sphere::Sphere(const Sphere &old) : center(old.center), radius(old.radius){}
+
+    /**
+     * @brief Returns the u/v coords of a texture sphere in a given point.
+     * 
+     * @param p - The point hitted in the sphere.
+     * @return geometry::Vec3 - The vector in which x = u, y = v and z = 0.
+     */
+    Vec3 Sphere::getUVCoords(const Vec3 &p) const{
+        // Compute the phi and theta angle.
+        float phi = atan2(p.z(), p.x()), theta = asin(p.y());
+        // Compute the u and v coords.
+        float u = 1 - (phi + M_PI) / (2 * M_PI),
+              v = (theta + M_PI / 2) / M_PI;
+
+        return{u, v, 0};
+    }
     
     /**
      * @brief Sphere equality.
@@ -128,7 +141,7 @@ namespace shapes{
      * @return false - Otherwise.
      */
     bool Sphere::scatter(Ray &ray, Vec3 &attenuation, const geometry::Vec3 &hitPoint) const{
-        return this->material->scatter(ray, attenuation, hitPoint, this->getNormal(hitPoint));
+        return this->material->scatter(ray, attenuation, hitPoint, this->getNormal(hitPoint), this->getUVCoords(hitPoint));
     }
 
     /**

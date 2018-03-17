@@ -6,13 +6,15 @@
 #include <limits>
 #include "../src/srt/paths.h"
 #include "parse_scene.hpp"
-// #include "raytracer.hpp"
 #include "../src/srt/Ray.hpp"
 #include "../src/srt/Camera.hpp"
 #include "../src/srt/utility/Stopwatch.hpp"
 #include "../src/srt/utility/Logger.hpp"
 #include "../src/srt/utility/FileManager.hpp"
 #include "../src/srt/geometry/shapes/MovingSphere.hpp"
+#include "../src/srt/textures/StaticTexture.hpp"
+#include "../src/srt/textures/CheckerTexture.hpp"
+#include "../src/srt/textures/ImageTexture.hpp"
 
 using namespace std;
 using namespace srt;
@@ -21,11 +23,15 @@ using namespace srt::geometry::shapes;
 using namespace srt::illumination::lights;
 using namespace srt::utility;
 
+/**************************************** TYPEDEF ****************************************/
+
+typedef vector<Vec3> pixel_vector;
+
 /**************************************** HEADER ****************************************/
 
 Scene random_scene();
-vector<Vec3> raytracing(Scene &scene, const Vec3 &origin = {0, 0, 0});
-void draw(const Scene &scene, const vector<Vec3> &pixels);
+pixel_vector raytracing(Scene &scene, const Vec3 &origin = {0, 0, 0});
+void draw(const Scene &scene, const pixel_vector &pixels);
 
 /**************************************** GLOBAL ****************************************/
 
@@ -36,26 +42,39 @@ const float MAX_FLOAT = std::numeric_limits<float>::max();
 
 int main(int argc, char **argv){
     srand(static_cast <unsigned> (time(0))); // Init random seed.
-    Stopwatch sw;
+    Stopwatch sw, sw1;
 
     cout << "Starting ray tracer..." << endl;
 
     // Build up the scene.
-    auto files = FileManager::getFiles(FILES_DIR + "scenes/");
+    //auto files = FileManager::getFiles(FILES_DIR + "scenes/");
 
-    for(size_t i = 0; i < 1; ++i){        
-        // Parse the scene and shot photons.
+    // for(size_t i = 0; i < files.size(); ++i){        
+        // Parse the scene.
+        sw1.start();
         // PMScene scene{100, 200, "test"};
         // Scene scene = build_scenes(FILES_DIR + "scenes/" + files[i]);
-        Scene scene = random_scene();
-        //shot_photons(scene);
+
+        // Random scene.
+        // Scene scene = random_scene();
+
+        // Test scene.
+        Scene scene{400, 400, "image_test"};
+        scene.addHitables({make_shared<Sphere>(Vec3{0, 0, 0}, 2, make_shared<Lambertian>(make_shared<ImageTexture>(FILES_DIR + "textures/earth.jpg")))});
+        scene.buildBVH();
+
+        cout << "...Ending scene creation in " << sw1.end() << "sec..." << endl;
 
         // Compute color through raytracing.
-        vector<Vec3> pixels = raytracing(scene);
+        sw1.start();
+        pixel_vector pixels = raytracing(scene);
+        cout << "...Ending color computation in " << sw1.end() << "sec..." << endl;
 
         // Render the scene.
+        sw1.start();
         draw(scene, pixels);
-    }
+        cout << "...Ending scene rendering in " << sw1.end() << "sec..." << endl;
+    // }
 
     cout << "...Ending raytracer in " << sw.end() << "sec" << endl;
 }
@@ -63,12 +82,12 @@ int main(int argc, char **argv){
 
 /**************************************** FUNCTIONS ****************************************/
 
-Scene random_scene(){
+Scene random_scene(){ 
     Scene scene{400, 800, "result"};
     int n = 500;
     vector<shared_ptr<Hitable>> spheres;
     spheres.reserve(n+1);
-    spheres.push_back(shared_ptr<Hitable>{new Sphere({0,-1000,0}, 1000, shared_ptr<Material>{new Lambertian({0.5, 0.5, 0.5})})});
+    spheres.push_back(make_shared<Sphere>(Vec3{0,-1000,0}, 1000, make_shared<Lambertian>(make_shared<CheckerTexture>())));
 
     for (short a = -11; a < 11; a++) {
         for (short b = -11; b < 11; b++) {
@@ -76,27 +95,27 @@ Scene random_scene(){
             Vec3 center{a+0.9*drand48(),0.2,b+0.9*drand48()}; 
             if ((center-Vec3(4,0.2,0)).length() > 0.9) { 
                 shared_ptr<Material> material;
-                if (choose_mat < 0.8) {         // Diffuse
-                    material = shared_ptr<Material>{new Lambertian{{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}}};
+                if (choose_mat < 0.8) {         // Diffuse 
+                    material = make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}));
                 }
                 else if (choose_mat < 0.95) {   // Metal
-                    material = shared_ptr<Material>{new Metal{{0.5*(1 + drand48()), 0.5*(1 + drand48()), 0.5*(1 + drand48())},  0.5*drand48()}};
+                    material = make_shared<Metal>(Vec3{0.5*(1 + drand48()), 0.5*(1 + drand48()), 0.5*(1 + drand48())},  0.5*drand48());
                 }
                 else {                          // Glass
-                    material = shared_ptr<Material>{new Dielectric{1.5}};
+                    material = make_shared<Dielectric>(1.5);
                 }
 
                 if(false && choose_mat < 0.8)
-                    spheres.push_back(shared_ptr<Hitable>{new MovingSphere{center, center.multiplication(Vec3{1, 0.5 * drand48(), 1}), 0, 1, 0.2, material}});
+                    spheres.push_back(make_shared<MovingSphere>(center, center.multiplication(Vec3{1, 0.5 * drand48(), 1}), 0, 1, 0.2, material));
                 else
-                    spheres.push_back(shared_ptr<Hitable>{new Sphere{center, 0.2, material}});
+                    spheres.push_back(make_shared<Sphere>(center, 0.2, material));
             }
         }
     }
 
-    spheres.push_back(shared_ptr<Hitable>{new Sphere({0, 1, 0}, 1.0, shared_ptr<Material>{new Dielectric{1.5}})});
-    spheres.push_back(shared_ptr<Hitable>{new Sphere({-4, 1, 0}, 1.0, shared_ptr<Material>{new Lambertian({0.4, 0.2, 0.1})})});
-    spheres.push_back(shared_ptr<Hitable>{new Sphere({4, 1, 0}, 1.0, shared_ptr<Material>{new Metal({0.7, 0.6, 0.5}, 0.0)})});
+    spheres.push_back(make_shared<Sphere>(Vec3{0, 1, 0}, 1.0, make_shared<Dielectric>(1.5)));
+    spheres.push_back(make_shared<Sphere>(Vec3{-4, 1, 0}, 1.0, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.4, 0.2, 0.1}))));
+    spheres.push_back(make_shared<Sphere>(Vec3{4, 1, 0}, 1.0, make_shared<Metal>(Vec3{0.7, 0.6, 0.5}, 0.0)));
 
     scene.addHitables(spheres);
     scene.buildBVH();
@@ -125,15 +144,15 @@ Vec3 color(const Ray &ray, const Scene &scene){
     return totAtt.multiplication((1 - t ) * Vec3{1, 1, 1} + t * Vec3{0.5, 0.7, 1.});
 }
 
-vector<Vec3> raytracing(Scene &scene, const Vec3 &origin){
+pixel_vector raytracing(Scene &scene, const Vec3 &origin){
     Vec3 lookFrom{13, 2, 3}, lookAt{0, 0, 0};
     float focus = 10, aperture = 0;
     const size_t height = scene.getHeight(), width = scene.getWidth();
     Camera cam{lookFrom, lookAt, {0, 1, 0}, 20, width / (float)height, aperture, focus, 0, 1};
-    vector<Vec3> pixels(height * width);
+    pixel_vector pixels(height * width);
     size_t sample = 100; 
 
-    // pixels.reserve(height * width);
+    // pixels.reserve(height * width * 3);
 
     #pragma omp parallel for
     for(size_t j = height; j > 0; --j){
@@ -151,6 +170,7 @@ vector<Vec3> raytracing(Scene &scene, const Vec3 &origin){
             finalColor *= 255.99;
             finalColor.makeInteger();
             pixels[(height - j) * width + i] = finalColor;
+            // pixels.push_back(finalColor.x()); pixels.push_back(finalColor.y()); pixels.push_back(finalColor.z());
         }
     }
 
@@ -158,12 +178,12 @@ vector<Vec3> raytracing(Scene &scene, const Vec3 &origin){
 }
 
 // Use a ppm files to rended the scenes.
-void draw(const Scene &scene, const vector<Vec3> &pixels){
+void draw(const Scene &scene, const pixel_vector &pixels){
     // Write on the file.
     ofstream image(FILES_DIR + scene.getName() + ".ppm", ios::out | ios::trunc);
     image << "P3\n" << scene.getWidth() << ' ' << scene.getHeight() << ' ' << "255\n";
 
-    //image.write(pixels.data(), pixels.size());
+    // image.write(pixels.data(), pixels.size());
     for(auto pix : pixels)
         image << pix.x() << ' ' << pix.y() << ' ' << pix.z() << '\n';
     image.close();

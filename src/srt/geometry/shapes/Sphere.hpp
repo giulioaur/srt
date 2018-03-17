@@ -27,6 +27,10 @@ private:
     srt::geometry::Vec3 center;
     float radius;
     std::shared_ptr<materials::Material> material;
+
+    // METHODS
+
+    geometry::Vec3 getUVCoords(const geometry::Vec3 &p) const;
     
 public:
     // CONSTRUCTORS

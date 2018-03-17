@@ -19,6 +19,7 @@ set(STRUCTURES_DIR ${MYBASE_DIR}/structures)
 set(UTILITY_DIR ${MYBASE_DIR}/utility)
 set(MATERIALS_DIR ${MYBASE_DIR}/materials)
 set(DS_DIR ${MYBASE_DIR}/ds)
+set(TEXTURES_DIR ${MYBASE_DIR}/textures)
 
 #########################SOURCE FILES#########################
 set(SRT_FILES ${MYBASE_DIR}/Ray.cpp 
@@ -41,10 +42,13 @@ set(MATERIAL_FILES ${MATERIALS_DIR}/Lambertian.cpp
                    ${MATERIALS_DIR}/Metal.cpp
                    ${MATERIALS_DIR}/Dielectric.cpp)
 set(DS_FILES ${DS_DIR}/BVH.cpp)
+set(TEXTURES_FILES ${TEXTURES_DIR}/StaticTexture.cpp
+                   ${TEXTURES_DIR}/CheckerTexture.cpp
+                   ${TEXTURES_DIR}/ImageTexture.cpp)
 set(MAIN_FILE example/${TARGET_FILE}.cpp)
 
 #########################EXECUTABLE#########################
-add_executable(${TARGET_FILE} ${MAIN_FILE} ${SRT_FILES} ${GEOMETRY_FILES} ${MATERIAL_FILES} ${DS_FILES} ${UTILITY_FILES})
+add_executable(${TARGET_FILE} ${MAIN_FILE} ${SRT_FILES} ${GEOMETRY_FILES} ${MATERIAL_FILES} ${DS_FILES} ${TEXTURES_FILES} ${UTILITY_FILES})
 
 #########################COMPILER OPTIONS#########################
 set (CMAKE_CXX_FLAGS_DEBUG "-g")

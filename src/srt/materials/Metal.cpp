@@ -55,7 +55,7 @@ namespace materials{
      * @return true 
      * @return false 
      */
-    bool Metal::scatter(Ray &ray, Vec3 &attenuation, const Vec3 &hitPoint, const Vec3 &normal) const{
+    bool Metal::scatter(Ray &ray, Vec3 &attenuation, const Vec3 &hitPoint, const Vec3 &normal, const Vec3 &textureCoords) const{
         Vec3 reflected = reflect(ray.getDirection(), normal);
         if(reflected * normal > 0){
             ray = {hitPoint, reflected + this->fuziness * Randomizer::randomInUnitSphere()};

@@ -70,7 +70,7 @@ namespace materials{
         return false;
     }
 
-    bool Dielectric::scatter(Ray &ray, Vec3 &attenuation, const Vec3 &hitPoint, const Vec3 &normal) const{
+    bool Dielectric::scatter(Ray &ray, Vec3 &attenuation, const Vec3 &hitPoint, const Vec3 &normal, const Vec3 &textureCoords) const{
         Vec3 reflected = this->reflect(ray.getDirection(), normal),
              outNormal = normal,
              refracted;

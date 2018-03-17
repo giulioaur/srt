@@ -25,7 +25,7 @@ private:
 public:
     // METHODS
     virtual bool scatter(Ray &ray, geometry::Vec3 &attenuation, const geometry::Vec3 &hitPoint, 
-                            const geometry::Vec3 &normal) const = 0;
+                            const geometry::Vec3 &normal, const geometry::Vec3 &textureCoords) const = 0;
 };
 }
 }

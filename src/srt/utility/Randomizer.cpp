@@ -9,6 +9,9 @@
  *******************************************************/
 #include "Randomizer.hpp"
 
+// Other system includes.
+#include <cmath>
+
 using namespace srt::geometry;
 
 namespace srt{
@@ -32,9 +35,21 @@ namespace utility{
      * @return Vec3 - A random point in unit sphere.
      */
     Vec3 Randomizer::randomInUnitSphere(){
-        Vec3 p;
-        p = 2. * Vec3{drand48(), drand48(), drand48()} - Vec3{1, 1, 1};
-        return p.normalize();
+        // // Not uniform
+        // Vec3 p;
+        // p = 2. * Vec3{drand48(), drand48(), drand48()} - Vec3{1, 1, 1};
+        // return p.normalize();
+
+        // Marsiglia's formula
+        float x1, x2, sos = 2;
+        while(sos >= 1){
+            x1 = drand48() * 2 - 1;
+            x2 = drand48() * 2 - 1;
+            sos = x1 * x1 + x2 * x2;
+        }
+
+        float ssos = sqrt(1 - sos);
+        return {2 * x1 * ssos, 2 * x2 * ssos, 1 - 2 * sos};
     }
 }
 }
