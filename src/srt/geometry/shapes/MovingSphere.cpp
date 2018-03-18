@@ -69,7 +69,7 @@ namespace shapes{
         }
 
         if(t >= tmin && t <= tmax)  return {true, t, this};
-        return {false, -1, nullptr}; 
+        return Hitable::NO_HIT; 
     }
 
     /**

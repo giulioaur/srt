@@ -2,51 +2,46 @@
  *                                                     *
  *  srt: Sushi RayTracer                               *
  *                                                     *
- *  SPHERE HEADER FILE                                 *
+ *  AARECTANGLE HEADER FILE                            *
  *                                                     *
  *  Giulio Auriemma                                    *
  *                                                     *
  *******************************************************/
-#ifndef S_SHAPES_SPHERE_S
-#define S_SHAPES_SPHERE_S
+#ifndef S_SHAPES_AARECTANGLE_S
+#define S_SHAPES_AARECTANGLE_S
 
 // My includes.
 #include "../../Hitable.hpp"
-#include "../Plane.hpp"
-#include "../../materials/Material.hpp"
 
 namespace srt{
 namespace geometry{
 namespace shapes{
 
-/// This class represents a sphere shape.
-class Sphere : public Hitable{
+/// This class represents an axis aligned rectangle.
+class AARectangle : public Hitable{
+public:
+    // ENUMERATIONS
+
+    // The type of the axis aligned rectangle.
+    enum Type {XY, XZ, YZ};
+
 private:
     // ATTRIBUTES
 
-    srt::geometry::Vec3 center;
-    float radius;
+    Type type;
+    float axis0_0, axis0_1, axis1_0, axis1_1, k;
     std::shared_ptr<materials::Material> material;
+    bool isNormalFlipped;
 
-    // METHODS
-
-    
-    
 public:
     // CONSTRUCTORS
 
-    Sphere(const srt::geometry::Vec3 &center, const float radius, const std::shared_ptr<materials::Material> material);
-    Sphere(const Sphere &old);
-
-    // OPERATORS
-
-    bool operator == (const Hitable &hitable) const;
-    bool operator != (const Hitable &hitable) const; 
+    AARectangle(const AARectangle::Type type, const float a0_0, const float a0_1, const float a1_0, const float a1_1, 
+                const float k, const std::shared_ptr<materials::Material> material, bool flipNormal = false);
+    AARectangle(const AARectangle &old);
 
     // METHODS
 
-    float getRay() const; 
-    const srt::geometry::Vec3& getCenter() const;
     virtual srt::geometry::Vec3 getNormal(const srt::geometry::Vec3 &pos) const;
     virtual Hitable::hit_record intersection(const srt::Ray &ray, const float tmin, const float tmax) const;
     virtual const std::shared_ptr<materials::Material> getMaterial() const;

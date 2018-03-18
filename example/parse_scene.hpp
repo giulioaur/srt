@@ -7,6 +7,7 @@
 #include "../src/srt/materials/Lambertian.hpp"
 #include "../src/srt/materials/Metal.hpp"
 #include "../src/srt/materials/Dielectric.hpp"
+#include "../src/srt/materials/lights/DiffuseLight.hpp"
 
 
 using namespace std;
@@ -17,6 +18,7 @@ using namespace srt::geometry::shapes;
 using namespace srt::illumination::lights;
 using namespace srt::textures;
 using namespace srt::materials;
+using namespace srt::materials::lights;
 
 Scene build_scenes(const string &file);
 shared_ptr<Hitable> parse_shape(const json::value_type &shapeToParse);

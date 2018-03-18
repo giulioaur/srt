@@ -7,8 +7,8 @@
  *  Giulio Auriemma                                    *
  *                                                     *
  *******************************************************/
-#ifndef S_DIELETRIC_LAMBERTIAN_S
-#define S_DIELETRIC_LAMBERTIAN_S
+#ifndef S_MATERIALS_DIELETRIC_S
+#define S_MATERIALS_DIELETRIC_S
 
 // My includes
 #include "Material.hpp"

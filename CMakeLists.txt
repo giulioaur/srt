@@ -24,12 +24,14 @@ set(TEXTURES_DIR ${MYBASE_DIR}/textures)
 #########################SOURCE FILES#########################
 set(SRT_FILES ${MYBASE_DIR}/Ray.cpp 
               ${MYBASE_DIR}/Scene.cpp
-              ${MYBASE_DIR}/Camera.cpp )
+              ${MYBASE_DIR}/Camera.cpp
+              ${MYBASE_DIR}/Hitable.cpp )
 set(GEOMETRY_FILES ${GEOMETRY_DIR}/Plane.cpp
                ${GEOMETRY_DIR}/Vec3.cpp
                ${GEOMETRY_DIR}/AABB.cpp
                ${GEOMETRY_DIR}/shapes/Sphere.cpp
-               ${GEOMETRY_DIR}/shapes/MovingSphere.cpp)
+               ${GEOMETRY_DIR}/shapes/MovingSphere.cpp
+               ${GEOMETRY_DIR}/shapes/AARectangle.cpp)
 #set(ILLUMINATION_FILES ${ILLUMINATION_DIR}/lights/Light.cpp
 #                       ${ILLUMINATION_DIR}/lights/Spotlight.cpp
 #                       ${ILLUMINATION_DIR}/pm/Photon.cpp
@@ -40,7 +42,8 @@ set(UTILITY_FILES ${UTILITY_DIR}/Stopwatch.cpp
                   ${UTILITY_DIR}/Randomizer.cpp)
 set(MATERIAL_FILES ${MATERIALS_DIR}/Lambertian.cpp
                    ${MATERIALS_DIR}/Metal.cpp
-                   ${MATERIALS_DIR}/Dielectric.cpp)
+                   ${MATERIALS_DIR}/Dielectric.cpp
+                   ${MATERIALS_DIR}/lights/DiffuseLight.cpp)
 set(DS_FILES ${DS_DIR}/BVH.cpp)
 set(TEXTURES_FILES ${TEXTURES_DIR}/StaticTexture.cpp
                    ${TEXTURES_DIR}/CheckerTexture.cpp

@@ -6,6 +6,7 @@
 #include <limits>
 #include "../src/srt/paths.h"
 #include "parse_scene.hpp"
+#include "scene_builder.hpp"
 #include "../src/srt/Ray.hpp"
 #include "../src/srt/Camera.hpp"
 #include "../src/srt/utility/Stopwatch.hpp"
@@ -29,7 +30,6 @@ typedef vector<Vec3> pixel_vector;
 
 /**************************************** HEADER ****************************************/
 
-Scene random_scene();
 pixel_vector raytracing(Scene &scene, const Vec3 &origin = {0, 0, 0});
 void draw(const Scene &scene, const pixel_vector &pixels);
 
@@ -58,10 +58,16 @@ int main(int argc, char **argv){
         // Random scene.
         // Scene scene = random_scene();
 
-        // Test scene.
-        Scene scene{400, 400, "image_test"};
-        scene.addHitables({make_shared<Sphere>(Vec3{0, 0, 0}, 2, make_shared<Lambertian>(make_shared<ImageTexture>(FILES_DIR + "textures/earth.jpg")))});
-        scene.buildBVH();
+        // Scene to test texture.
+        // Scene scene{400, 400, "image_test"};
+        // scene.addHitables({make_shared<Sphere>(Vec3{0, 0, 0}, 2, make_shared<Lambertian>(make_shared<ImageTexture>(FILES_DIR + "textures/earth.jpg")))});
+        // scene.buildBVH();
+
+        // Scene to test light.
+        // Scene scene = light_scene();
+
+        // Cornell box.
+        Scene scene = cornell_box(620, 700);
 
         cout << "...Ending scene creation in " << sw1.end() << "sec..." << endl;
 
@@ -82,73 +88,45 @@ int main(int argc, char **argv){
 
 /**************************************** FUNCTIONS ****************************************/
 
-Scene random_scene(){ 
-    Scene scene{400, 800, "result"};
-    int n = 500;
-    vector<shared_ptr<Hitable>> spheres;
-    spheres.reserve(n+1);
-    spheres.push_back(make_shared<Sphere>(Vec3{0,-1000,0}, 1000, make_shared<Lambertian>(make_shared<CheckerTexture>())));
-
-    for (short a = -11; a < 11; a++) {
-        for (short b = -11; b < 11; b++) {
-            float choose_mat = drand48();
-            Vec3 center{a+0.9*drand48(),0.2,b+0.9*drand48()}; 
-            if ((center-Vec3(4,0.2,0)).length() > 0.9) { 
-                shared_ptr<Material> material;
-                if (choose_mat < 0.8) {         // Diffuse 
-                    material = make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}));
-                }
-                else if (choose_mat < 0.95) {   // Metal
-                    material = make_shared<Metal>(Vec3{0.5*(1 + drand48()), 0.5*(1 + drand48()), 0.5*(1 + drand48())},  0.5*drand48());
-                }
-                else {                          // Glass
-                    material = make_shared<Dielectric>(1.5);
-                }
-
-                if(false && choose_mat < 0.8)
-                    spheres.push_back(make_shared<MovingSphere>(center, center.multiplication(Vec3{1, 0.5 * drand48(), 1}), 0, 1, 0.2, material));
-                else
-                    spheres.push_back(make_shared<Sphere>(center, 0.2, material));
-            }
-        }
-    }
-
-    spheres.push_back(make_shared<Sphere>(Vec3{0, 1, 0}, 1.0, make_shared<Dielectric>(1.5)));
-    spheres.push_back(make_shared<Sphere>(Vec3{-4, 1, 0}, 1.0, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.4, 0.2, 0.1}))));
-    spheres.push_back(make_shared<Sphere>(Vec3{4, 1, 0}, 1.0, make_shared<Metal>(Vec3{0.7, 0.6, 0.5}, 0.0)));
-
-    scene.addHitables(spheres);
-    scene.buildBVH();
-    return scene;
-}
-
 Vec3 color(const Ray &ray, const Scene &scene){
-    int isLight;
     Ray currRay{ray};
     size_t depth = 0;
-    Vec3 totAtt = {1, 1, 1}, currAtt;
-    Hitable::hit_record container = scene.intersection(currRay, 0.001, MAX_FLOAT, isLight); 
+    Vec3 color = {1, 1, 1}, attenuation, emission, hitPoint;
+    Hitable::hit_record container = scene.intersection(currRay, 0.001, MAX_FLOAT); 
     
     // Compute the attenuation factor of the bouncing ray.
     while(container.hitted){
-        if(depth < 50 && container.object->scatter(currRay, currAtt, currRay.getPoint(container.t)))
-            totAtt = totAtt.multiplication(currAtt); 
-        else
-            return {0, 0, 0};
+        auto material = container.object->getMaterial();
+        hitPoint = currRay.getPoint(container.t);
+        Vec3 texturesCoords = container.object->getTextureCoords(hitPoint);
 
-        container = scene.intersection(currRay, 0.001, MAX_FLOAT, isLight);
+        // Add emission if one.
+        if(!material->emit(hitPoint, texturesCoords, emission))
+            emission = {0, 0, 0};
+
+        if(depth < 50 && material->scatter(currRay, attenuation, hitPoint, container.object->getNormal(hitPoint),
+                                            texturesCoords ))
+            color = color.multiplication(emission + attenuation); 
+        else
+            return color.multiplication(emission);
+
+        container = scene.intersection(currRay, 0.001, MAX_FLOAT);
         ++depth;
     }
 
-    float t = 0.5 * (currRay.getDirection().y() + 1);
-    return totAtt.multiplication((1 - t ) * Vec3{1, 1, 1} + t * Vec3{0.5, 0.7, 1.});
+    // float t = 0.5 * (currRay.getDirection().y() + 1);
+    // return color.multiplication((1 - t ) * Vec3{1, 1, 1} + t * Vec3{0.5, 0.7, 1.});
+    return {0, 0, 0};
 }
 
 pixel_vector raytracing(Scene &scene, const Vec3 &origin){
-    Vec3 lookFrom{13, 2, 3}, lookAt{0, 0, 0};
-    float focus = 10, aperture = 0;
+    // Random scene camera.
+    //Vec3 lookFrom{13, 2, 3}, lookAt{0, 0, 0};
+    // Cornell box camera.
+    Vec3 lookFrom{278, 278, -800}, lookAt{278, 278, 0};
+    float focus = 10, aperture = 0, vfov = 40;
     const size_t height = scene.getHeight(), width = scene.getWidth();
-    Camera cam{lookFrom, lookAt, {0, 1, 0}, 20, width / (float)height, aperture, focus, 0, 1};
+    Camera cam{lookFrom, lookAt, {0, 1, 0}, vfov, width / float(height), aperture, focus, 0, 1};
     pixel_vector pixels(height * width);
     size_t sample = 100; 
 
@@ -157,7 +135,7 @@ pixel_vector raytracing(Scene &scene, const Vec3 &origin){
     #pragma omp parallel for
     for(size_t j = height; j > 0; --j){
         for(size_t i = 0 ; i < width; ++i){
-            Vec3 finalColor;
+            Vec3 finalColor; 
             // Anti aliasing.
             for(size_t k = 0; k < sample; ++k){
                 float u = ((float)i + drand48()) / width, v = ((float)j + drand48()) / height;

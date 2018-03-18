@@ -42,6 +42,8 @@ example/test
 files/test.ppm
 files/random.ppm
 files/random (copy 1).ppm
+files/image_test.ppm
+files/test_light.ppm
 files/scenes/*
 !files/scenes/test.json
 

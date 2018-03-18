@@ -38,7 +38,7 @@ namespace srt{
      * @param t0 - The first instant of time considered in the scene. 0 by default.
      * @param t1 - The last instant of time considered in the scene. 1 by default.
      */
-    Scene::Scene(const float height, const float width, const string &name, const float t0, const float t1) :
+    Scene::Scene(const float width, const float height, const string &name, const float t0, const float t1) :
         height(height), width(width), name(name), t0(t0), t1(t1) { }
 
     /**
@@ -76,15 +76,6 @@ namespace srt{
         return this->name;
     }
 
-    // /**
-    //  * @brief Returns all the lights in the scene.
-    //  * 
-    //  * @return const std::vector<const std::shared_ptr<Light>>& - The vector with the lights.
-    //  */
-    // const vector<shared_ptr<Light>>& Scene::getLights() const{
-    //     return this->lights;
-    // }
-
     /**
      * @brief Builds a new tree for the BVH. This function should be called every time
      *        the user want to update the bvh after inserting new object.
@@ -103,15 +94,6 @@ namespace srt{
         this->hitables.insert(this->hitables.end(), newHitables.begin(), newHitables.end());
     }
 
-    // /**
-    //  * @brief Adds new lights to the scene.
-    //  * 
-    //  * @param newLights - The lights to add to the scene.
-    //  */
-    // void Scene::addLights(const std::vector<std::shared_ptr<Light>> &newLights){
-    //     this->lights.insert(this->lights.end(), newLights.begin(), newLights.end());
-    // }
-
     /**
      * @brief Returns the object intersected by the ray, if one. If no object has been intersected,
      *        returns nullptr.
@@ -123,36 +105,7 @@ namespace srt{
      * @param minDist - The minimum distance for the intersection.
      * @return std::shared_ptr<Hitable> - The closer Hitable intersected.
      */
-    const Hitable::hit_record Scene::intersection(const Ray &ray, const float tmin, const float tmax, 
-        int &lightPos, const shared_ptr<Light> light) const{
-        // Hitable::hit_record record{false, -1, nullptr};
-        // float max = tmax;
-        // lightPos = -1;
-
-        // // Check if a light is interected.
-        // // for(size_t i = 0; i < this->lights.size(); ++i){
-        // //     if(light == nullptr || *light != *this->lights[i]){
-        // //         float t = this->lights[i]->getHitable()->intersection(ray, tmin, max);
-        // //         if(t >= 0){
-        // //             max = t;
-        // //             lightPos = i;
-        // //             Hitable = this->lights[i]->getHitable();
-        // //         }
-        // //     } 
-        // // }
-
-        // // Then check if another Hitable is intersected.
-        // for(size_t i = 0; i < this->hitables.size(); ++i){
-        //     Hitable::hit_record rec = this->hitables[i]->intersection(ray, tmin, max);
-        //     if(rec.hitted && rec.t >= 0){
-        //         max = rec.t;
-        //         lightPos = -1;
-        //         record = rec;
-        //     }
-        // }
-        
-        // return record;
-
+    const Hitable::hit_record Scene::intersection(const Ray &ray, const float tmin, const float tmax) const{
         return this->hitablesTree.intersection(ray, tmin, tmax);
     }
 }
