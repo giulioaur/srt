@@ -5,7 +5,7 @@ This is a first experiment to build a basic ray tracer and also my project for t
 There is a cmake file for compiling the project. Running the executable an image called "result.ppm" will be generated in the files directory.
 
 ## Current state
-
+![](https://github.com/giulioaur/srt/blob/master/files/cornell_box.ppm)
 This is the result of the actual state of my raytracer.
 Resolution: 580 x 720
 Sample per pixels: 1000
