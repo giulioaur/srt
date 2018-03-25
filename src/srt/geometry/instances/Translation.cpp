@@ -43,10 +43,8 @@ namespace instances{
         auto record = this->object->intersection(movedRay, tmin, tmax);
         
         // If a point has been hit, translate it.
-        if(record.hit){
+        if(record.hit)
             record.point += offset;
-            // record.object = this;
-        }   
 
         return record;
     }

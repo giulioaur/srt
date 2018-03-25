@@ -38,7 +38,7 @@ namespace shapes{
      * @param old - The rectangle to copy.
      */
     AARectangle::AARectangle(const AARectangle &old) : type(old.type), axis0_0(old.axis0_0), axis0_1(old.axis0_1), axis1_0(old.axis1_0), 
-        axis1_1(old.axis1_1), k(old.k), material(old.material) { }
+        axis1_1(old.axis1_1), k(old.k), material(old.material), isNormalFlipped(old.isNormalFlipped){ }
 
     /**
      * @brief Return the normal of the rectangle.
@@ -63,7 +63,7 @@ namespace shapes{
      * @return Hitable::hit_record - The record that stores hit info.
      */
     Hitable::hit_record AARectangle::intersection(const srt::Ray &ray, const float tmin, const float tmax) const{
-        size_t a0, a1, a2;
+        uint8_t a0, a1, a2;
         const Vec3 ro = ray.getOrigin(), rd = ray.getDirection();
 
         // Set the index of the coords for the three axis.
@@ -89,7 +89,7 @@ namespace shapes{
             hitPoint[a1] < this->axis1_0 || hitPoint[a1] > this->axis1_1)
             return Hitable::NO_HIT;
         
-        return {true, t, this, ray.getPoint(t), this->getNormal(ray.getPoint(t))};
+        return {true, t, this, hitPoint, this->getNormal(hitPoint)};
     }
 
     /**

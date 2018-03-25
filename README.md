@@ -3,3 +3,11 @@ This is a first experiment to build a basic ray tracer and also my project for t
 
 ## Running the example
 There is a cmake file for compiling the project. Running the executable an image called "result.ppm" will be generated in the files directory.
+
+## Current state
+
+This is the result of the actual state of my raytracer.
+Resolution: 580 x 720
+Sample per pixels: 1000
+Max number of ray bouncing: 50
+Time: 661 sec 

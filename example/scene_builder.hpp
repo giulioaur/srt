@@ -82,10 +82,10 @@ Scene cornell_box(const float width, const float height){
     vector<shared_ptr<Hitable>> objects;
     auto white = make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.73, 0.73, 0.73}));
 
-    // Left wall.
-    objects.push_back(make_shared<AARectangle>(AARectangle::YZ, 0, 555, 0, 555, 555, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.12, 0.45, 0.15})), true));
     // Right wall.
-    objects.push_back(make_shared<AARectangle>(AARectangle::YZ, 0, 555, 0, 555, 0, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.65, 0.05, 0.05}))));
+    objects.push_back(make_shared<AARectangle>(AARectangle::YZ, 0, 555, 0, 555, 555, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.65, 0.05, 0.05})), true));
+    // Left wall.
+    objects.push_back(make_shared<AARectangle>(AARectangle::YZ, 0, 555, 0, 555, 0, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.12, 0.45, 0.15}))));
     // Front wall.
     objects.push_back(make_shared<AARectangle>(AARectangle::XY, 0, 555, 0, 555, 555, white, true));
     // Roof.
@@ -95,9 +95,10 @@ Scene cornell_box(const float width, const float height){
     // Light.
     objects.push_back(make_shared<AARectangle>(AARectangle::XZ, 213, 343, 227, 332, 554, make_shared<DiffuseLight>(make_shared<StaticTexture>(Vec3{15, 15, 15})), true));
     // Box1.
-    objects.push_back(make_shared<Translation>(make_shared<Rotation>(Rotation::pitch, make_shared<AABox>(Vec3{0, 0, 0}, Vec3{165, 165, 165}, white), -18), Vec3{130, 0, 65}));
+    objects.push_back(make_shared<Translation>(make_shared<Rotation>(Rotation::pitch, make_shared<AABox>(Vec3{0, 0, 0}, Vec3{165, 165, 165}, white), 18), Vec3{265, 0, 65}));
+    // objects.push_back(make_shared<Rotation>(Rotation::pitch, make_shared<AARectangle>( AARectangle::YZ, 0, 165, 0, 165, 165, white, true), -18));
     // Box2.
-    objects.push_back(make_shared<Translation>(make_shared<Rotation>(Rotation::pitch, make_shared<AABox>(Vec3{0, 0, 0}, Vec3{165, 330, 165}, white), 15), Vec3{265, 0, 295}));
+    objects.push_back(make_shared<Translation>(make_shared<Rotation>(Rotation::pitch, make_shared<AABox>(Vec3{0, 0, 0}, Vec3{165, 330, 165}, white), -15), Vec3{130, 0, 295}));
 
     scene.addHitables(objects);
     scene.buildBVH();

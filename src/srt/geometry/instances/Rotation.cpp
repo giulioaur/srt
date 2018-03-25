@@ -103,15 +103,15 @@ namespace instances{
         auto box = this->object->getAABB(t0, t1);
 
         // Find min and max of the rotated bounding box.
-        for(size_t i = 0; i < 2; ++i){
-            for(size_t j = 0; j < 2; ++j){
-                for(size_t k = 0; k < 2; ++k){
+        for(uint8_t i = 0; box && i < 2; ++i){
+            for(uint8_t j = 0; j < 2; ++j){
+                for(uint8_t k = 0; k < 2; ++k){
                     Vec3 newCoord{ i * box->getMax().x() + (1 - i) * box->getMin().x(),
                                    j * box->getMax().y() + (1 - j) * box->getMin().y(),
                                    k * box->getMax().z() + (1 - k) * box->getMin().z() };
                     Vec3 toTest = this->inverseMat * newCoord;
 
-                    for(size_t c = 0; c < 3; ++c){
+                    for(uint8_t c = 0; c < 3; ++c){
                         if(toTest[c] < min[c]) min[c] = toTest[c];
                         if(toTest[c] > max[c]) max[c] = toTest[c];
                     }
@@ -119,7 +119,7 @@ namespace instances{
             }
         }
 
-        return std::make_unique<AABB>(Vec3{min}, Vec3{max});
+        return box ? std::make_unique<AABB>(Vec3{min}, Vec3{max}) : nullptr;
     }
 
     /**

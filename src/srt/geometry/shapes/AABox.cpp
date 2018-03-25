@@ -28,8 +28,8 @@ namespace shapes{
                  AARectangle(AARectangle::XY, min.x(), max.x(), min.y(), max.y(), min.z(), material, true),
                  AARectangle(AARectangle::XZ, min.x(), max.x(), min.z(), max.z(), max.y(), material),
                  AARectangle(AARectangle::XZ, min.x(), max.x(), min.z(), max.z(), min.y(), material, true),
-                 AARectangle(AARectangle::YZ, min.y(), max.y(), min.z(), max.z(), min.x(), material),
-                 AARectangle(AARectangle::YZ, min.y(), max.y(), min.z(), max.z(), max.x(), material, true)}}, 
+                 AARectangle(AARectangle::YZ, min.y(), max.y(), min.z(), max.z(), min.x(), material, true),
+                 AARectangle(AARectangle::YZ, min.y(), max.y(), min.z(), max.z(), max.x(), material)}}, 
         min(min), max(max) { } 
     
     

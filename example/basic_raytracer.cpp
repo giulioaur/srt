@@ -5,13 +5,10 @@
 #include <cmath>
 #include <limits>
 #include "../src/srt/paths.h"
-#include "parse_scene.hpp"
 #include "scene_builder.hpp"
 #include "../src/srt/Ray.hpp"
 #include "../src/srt/Camera.hpp"
 #include "../src/srt/utility/Stopwatch.hpp"
-#include "../src/srt/utility/Logger.hpp"
-#include "../src/srt/utility/FileManager.hpp"
 #include "../src/srt/geometry/shapes/MovingSphere.hpp"
 #include "../src/srt/textures/StaticTexture.hpp"
 #include "../src/srt/textures/CheckerTexture.hpp"
@@ -26,7 +23,8 @@ using namespace srt::utility;
 
 /**************************************** DEFINE ****************************************/
 
-#define SAMPLES 200
+#define SAMPLES 1000
+#define MAX_DEPTH 50
 
 /**************************************** TYPEDEF ****************************************/
 
@@ -71,7 +69,7 @@ int main(int argc, char **argv){
         // Scene scene = light_scene();
 
         // Cornell box.
-        Scene scene = cornell_box(620, 700);
+        Scene scene = cornell_box(580, 720);
 
         cout << "...Ending scene creation in " << sw1.end() << "sec..." << endl;
 
@@ -107,7 +105,7 @@ Vec3 color(const Ray &ray, const Scene &scene){
         if(!material->emit(container.point, texturesCoords, emission))
             emission = {0, 0, 0};
 
-        if(depth < 50 && material->scatter(currRay, attenuation, container.point, 
+        if(depth++ < MAX_DEPTH && material->scatter(currRay, attenuation, container.point, 
                                             container.normal, 
                                             texturesCoords ))
             color = color.multiplication(emission + attenuation); 
@@ -115,7 +113,6 @@ Vec3 color(const Ray &ray, const Scene &scene){
             return color.multiplication(emission);
 
         container = scene.intersection(currRay, 0.001, MAX_FLOAT);
-        ++depth;
     }
 
     // float t = 0.5 * (currRay.getDirection().y() + 1);

@@ -37,8 +37,8 @@ namespace srt{
             const float aspect, const float aperture, const float focusDist, const float t0, const float t1) : 
             origin(lookFrom), aperture(aperture / 2), t0(t0 > 0 ? t0 : 0), t1(t1 > t0 ? t1 : t0){
         Vec3 w = (lookFrom - lookAt).normalize();
-        this->u = up.cross(w).normalize();
-        this->v = w.cross(this->u).normalize();
+        this->u = w.cross(up).normalize();
+        this->v = this->u.cross(w).normalize();
         float theta = vfov * M_PI / 180.;
         float half_height = tan(theta / 2);
         float half_width = aspect * half_height;

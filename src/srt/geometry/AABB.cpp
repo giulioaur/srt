@@ -64,7 +64,7 @@ namespace geometry{
      * @return false - If the ray does not it the aabb.
      */
     bool AABB::hit(const srt::Ray &ray, float tmin, float tmax) const{
-        for(size_t i = 0; i < 3; ++i){
+        for(uint8_t i = 0; i < 3; ++i){
             // Compute intersection point.
             const float invD = 1 / ray.getDirection()[i];
             float t0 = (this->min[i] - ray.getOrigin()[i]) * invD;
