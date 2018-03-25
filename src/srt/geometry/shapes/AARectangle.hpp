@@ -22,7 +22,7 @@ class AARectangle : public Hitable{
 public:
     // ENUMERATIONS
 
-    // The type of the axis aligned rectangle.
+    /// The type of the axis aligned rectangle.
     enum Type {XY, XZ, YZ};
 
 private:
@@ -42,11 +42,11 @@ public:
 
     // METHODS
 
-    virtual srt::geometry::Vec3 getNormal(const srt::geometry::Vec3 &pos) const;
-    virtual Hitable::hit_record intersection(const srt::Ray &ray, const float tmin, const float tmax) const;
-    virtual const std::shared_ptr<materials::Material> getMaterial() const;
-    virtual std::unique_ptr<geometry::AABB> getAABB(const float t0, const float t1) const;
-    virtual geometry::Vec3 getTextureCoords(const geometry::Vec3 &p) const;
+    virtual Vec3 getNormal(const Vec3 &pos) const;
+    virtual Hitable::hit_record intersection(const Ray &ray, const float tmin, const float tmax) const;
+    virtual const std::shared_ptr<materials::Material> &getMaterial() const;
+    virtual std::unique_ptr<AABB> getAABB(const float t0, const float t1) const;
+    virtual Vec3 getTextureCoords(const Vec3 &p) const;
 };
 
 }

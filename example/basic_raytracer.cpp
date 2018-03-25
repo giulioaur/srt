@@ -24,6 +24,10 @@ using namespace srt::geometry::shapes;
 using namespace srt::illumination::lights;
 using namespace srt::utility;
 
+/**************************************** DEFINE ****************************************/
+
+#define SAMPLES 200
+
 /**************************************** TYPEDEF ****************************************/
 
 typedef vector<Vec3> pixel_vector;
@@ -91,20 +95,20 @@ int main(int argc, char **argv){
 Vec3 color(const Ray &ray, const Scene &scene){
     Ray currRay{ray};
     size_t depth = 0;
-    Vec3 color = {1, 1, 1}, attenuation, emission, hitPoint;
+    Vec3 color = {1, 1, 1}, attenuation, emission;
     Hitable::hit_record container = scene.intersection(currRay, 0.001, MAX_FLOAT); 
     
     // Compute the attenuation factor of the bouncing ray.
-    while(container.hitted){
+    while(container.hit){
         auto material = container.object->getMaterial();
-        hitPoint = currRay.getPoint(container.t);
-        Vec3 texturesCoords = container.object->getTextureCoords(hitPoint);
+        Vec3 texturesCoords = container.object->getTextureCoords(container.point);
 
         // Add emission if one.
-        if(!material->emit(hitPoint, texturesCoords, emission))
+        if(!material->emit(container.point, texturesCoords, emission))
             emission = {0, 0, 0};
 
-        if(depth < 50 && material->scatter(currRay, attenuation, hitPoint, container.object->getNormal(hitPoint),
+        if(depth < 50 && material->scatter(currRay, attenuation, container.point, 
+                                            container.normal, 
                                             texturesCoords ))
             color = color.multiplication(emission + attenuation); 
         else
@@ -128,7 +132,6 @@ pixel_vector raytracing(Scene &scene, const Vec3 &origin){
     const size_t height = scene.getHeight(), width = scene.getWidth();
     Camera cam{lookFrom, lookAt, {0, 1, 0}, vfov, width / float(height), aperture, focus, 0, 1};
     pixel_vector pixels(height * width);
-    size_t sample = 100; 
 
     // pixels.reserve(height * width * 3);
 
@@ -137,16 +140,16 @@ pixel_vector raytracing(Scene &scene, const Vec3 &origin){
         for(size_t i = 0 ; i < width; ++i){
             Vec3 finalColor; 
             // Anti aliasing.
-            for(size_t k = 0; k < sample; ++k){
+            for(size_t k = 0; k < SAMPLES; ++k){
                 float u = ((float)i + drand48()) / width, v = ((float)j + drand48()) / height;
 
                 finalColor += color(cam.get_ray(u, v), scene);
             }
 
-            finalColor /= sample;
+            finalColor /= SAMPLES;
             finalColor = finalColor.map([](float n){return sqrt(n);});
             finalColor *= 255.99;
-            finalColor.makeInteger();
+
             pixels[(height - j) * width + i] = finalColor;
             // pixels.push_back(finalColor.x()); pixels.push_back(finalColor.y()); pixels.push_back(finalColor.z());
         }
@@ -163,6 +166,6 @@ void draw(const Scene &scene, const pixel_vector &pixels){
 
     // image.write(pixels.data(), pixels.size());
     for(auto pix : pixels)
-        image << pix.x() << ' ' << pix.y() << ' ' << pix.z() << '\n';
+        image << short(pix.x()) << ' ' << short(pix.y()) << ' ' << short(pix.z()) << '\n';
     image.close();
 }

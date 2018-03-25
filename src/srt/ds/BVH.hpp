@@ -39,8 +39,6 @@ public:
 
     virtual Hitable::hit_record intersection(const Ray &ray, const float tmin, const float tmax) const;
     virtual std::unique_ptr<geometry::AABB> getAABB(const float t0, const float t1) const;
-    virtual geometry::Vec3 getNormal(const srt::geometry::Vec3 &pos) const {return {0, 0, 0};}
-    virtual bool scatter(Ray &ray, geometry::Vec3 &attenuation, const geometry::Vec3 &hitPoint) const {return false;}
 };
 
 }

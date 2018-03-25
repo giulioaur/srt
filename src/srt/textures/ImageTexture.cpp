@@ -48,7 +48,7 @@ namespace textures{
      * 
      * @param u - The x texture coord. Ranged from 0 to 1.
      * @param v - The y texture coord. Ranged from 0 to 1.
-     * @param p - The point hitted on the object.
+     * @param p - The point hit on the object.
      * @return geometry::Vec3 - The color of the image.
      */
     geometry::Vec3 ImageTexture::value(const float u, const float v, const geometry::Vec3 &p) const{

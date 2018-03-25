@@ -28,14 +28,10 @@ private:
     float radius;
     std::shared_ptr<materials::Material> material;
 
-    // METHODS
-
-    
-    
 public:
     // CONSTRUCTORS
 
-    Sphere(const srt::geometry::Vec3 &center, const float radius, const std::shared_ptr<materials::Material> material);
+    Sphere(const Vec3 &center, const float radius, const std::shared_ptr<materials::Material> material);
     Sphere(const Sphere &old);
 
     // OPERATORS
@@ -46,12 +42,12 @@ public:
     // METHODS
 
     float getRay() const; 
-    const srt::geometry::Vec3& getCenter() const;
-    virtual srt::geometry::Vec3 getNormal(const srt::geometry::Vec3 &pos) const;
-    virtual Hitable::hit_record intersection(const srt::Ray &ray, const float tmin, const float tmax) const;
-    virtual const std::shared_ptr<materials::Material> getMaterial() const;
-    virtual std::unique_ptr<geometry::AABB> getAABB(const float t0, const float t1) const;
-    virtual geometry::Vec3 getTextureCoords(const geometry::Vec3 &p) const;
+    const Vec3& getCenter() const;
+    virtual Vec3 getNormal(const Vec3 &pos) const;
+    virtual Hitable::hit_record intersection(const Ray &ray, const float tmin, const float tmax) const;
+    virtual const std::shared_ptr<materials::Material> &getMaterial() const;
+    virtual std::unique_ptr<AABB> getAABB(const float t0, const float t1) const;
+    virtual Vec3 getTextureCoords(const Vec3 &p) const;
 };
 
 }

@@ -30,7 +30,7 @@ namespace shapes{
      */
     MovingSphere::MovingSphere(const Vec3 &c0, const Vec3 &c1, const float t0, const float t1, 
         const float ray, const shared_ptr<Material> material) : Sphere({0, 0, 0}, ray, material),
-        c0(c0), c1(c1), t0(t0), t1(t1) { }
+        c0(c0), c1(c1), t0(t0), t1(t1){ }
 
     /**
      * @brief Creates a new sphere with the same center and ray of an old one.
@@ -68,7 +68,7 @@ namespace shapes{
             else                        t = max(t0, t1);
         }
 
-        if(t >= tmin && t <= tmax)  return {true, t, this};
+        if(t >= tmin && t <= tmax)  return {true, t, this, ray.getPoint(t), this->getNormal(ray.getPoint(t))};
         return Hitable::NO_HIT; 
     }
 
@@ -80,7 +80,7 @@ namespace shapes{
      * @return std::unique_ptr<geometry::AABB> - The AABB.
      */
     std::unique_ptr<geometry::AABB> MovingSphere::getAABB(const float t0, const float t1) const{
-        const Vec3 radVec{this->getRay(), this->getRay(), this->getRay()};
+        const Vec3 radVec{this->getRay()};
         AABB aabb0{this->c0 - radVec, this->c0 + radVec}, 
              aabb1{this->c1 - radVec, this->c1 + radVec};
 

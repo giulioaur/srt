@@ -1,9 +1,12 @@
 #include <vector>
 #include <memory>
 #include "../src/srt/Scene.hpp"
-#include "../src/srt/geometry/shapes/AARectangle.hpp"
 #include "../src/srt/geometry/shapes/Sphere.hpp"
 #include "../src/srt/geometry/shapes/MovingSphere.hpp"
+#include "../src/srt/geometry/shapes/AARectangle.hpp"
+#include "../src/srt/geometry/shapes/AABox.hpp"
+#include "../src/srt/geometry/instances/Translation.hpp"
+#include "../src/srt/geometry/instances/Rotation.hpp"
 #include "../src/srt/textures/StaticTexture.hpp"
 #include "../src/srt/textures/CheckerTexture.hpp"
 #include "../src/srt/materials/Lambertian.hpp"
@@ -15,6 +18,7 @@ using namespace std;
 using namespace srt;
 using namespace srt::geometry;
 using namespace srt::geometry::shapes;
+using namespace srt::geometry::instances;
 using namespace srt::textures;
 using namespace srt::materials;
 using namespace srt::materials::lights;
@@ -76,19 +80,24 @@ Scene light_scene(const float width, const float height){
 Scene cornell_box(const float width, const float height){
     Scene scene{width, height, "cornell_box"};
     vector<shared_ptr<Hitable>> objects;
+    auto white = make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.73, 0.73, 0.73}));
 
     // Left wall.
     objects.push_back(make_shared<AARectangle>(AARectangle::YZ, 0, 555, 0, 555, 555, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.12, 0.45, 0.15})), true));
     // Right wall.
     objects.push_back(make_shared<AARectangle>(AARectangle::YZ, 0, 555, 0, 555, 0, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.65, 0.05, 0.05}))));
     // Front wall.
-    objects.push_back(make_shared<AARectangle>(AARectangle::XY, 0, 555, 0, 555, 555, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.73, 0.73, 0.73})), true));
+    objects.push_back(make_shared<AARectangle>(AARectangle::XY, 0, 555, 0, 555, 555, white, true));
     // Roof.
-    objects.push_back(make_shared<AARectangle>(AARectangle::XZ, 0, 555, 0, 555, 555, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.73, 0.73, 0.73})), true));
+    objects.push_back(make_shared<AARectangle>(AARectangle::XZ, 0, 555, 0, 555, 555, white, true));
     // Floor.
-    objects.push_back(make_shared<AARectangle>(AARectangle::XZ, 0, 555, 0, 555, 0, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.73, 0.73, 0.73}))));
+    objects.push_back(make_shared<AARectangle>(AARectangle::XZ, 0, 555, 0, 555, 0, white));
     // Light.
     objects.push_back(make_shared<AARectangle>(AARectangle::XZ, 213, 343, 227, 332, 554, make_shared<DiffuseLight>(make_shared<StaticTexture>(Vec3{15, 15, 15})), true));
+    // Box1.
+    objects.push_back(make_shared<Translation>(make_shared<Rotation>(Rotation::pitch, make_shared<AABox>(Vec3{0, 0, 0}, Vec3{165, 165, 165}, white), -18), Vec3{130, 0, 65}));
+    // Box2.
+    objects.push_back(make_shared<Translation>(make_shared<Rotation>(Rotation::pitch, make_shared<AABox>(Vec3{0, 0, 0}, Vec3{165, 330, 165}, white), 15), Vec3{265, 0, 295}));
 
     scene.addHitables(objects);
     scene.buildBVH();

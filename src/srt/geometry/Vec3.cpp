@@ -20,7 +20,14 @@ namespace geometry{
      * @brief Creates a vector with all components setted to 0.
      * 
      */
-    Vec3::Vec3() : _x(0), _y(0), _z(0), _length(0) {}
+    Vec3::Vec3() : comps{{0, 0, 0}} { }
+
+    /**
+     * @brief Construct a new Vec 3 object with the same value for all components.
+     * 
+     * @param n - The value for all the components.
+     */
+    Vec3::Vec3(const float n) : comps{{n, n, n}} { }
 
     /**
      * @brief Creates a new 3D vector.
@@ -29,8 +36,8 @@ namespace geometry{
      * @param y - The y axis component.
      * @param z - The z axis component. 
      */
-    Vec3::Vec3(const float x, const float y, const float z) : _x(x), _y(y), _z(z), 
-        _length(sqrt(x * x + y * y + z * z)) {}
+    Vec3::Vec3(const float x, const float y, const float z) : 
+        comps{{x, y, z}} { }
 
     /**
      * @brief Creates a new 3D vector copying the first three components of a std::vector. The std::vector must
@@ -41,22 +48,48 @@ namespace geometry{
     Vec3::Vec3(const std::vector<float> &vec){
         if(vec.size() < 3)
             throw std::invalid_argument("The size of the vector must be greater or equal than 3.");
-        this->_x = vec[0]; this->_y = vec[1]; this->_z = vec[2];
-        this->_length = sqrt(this->_x * this->_x + this->_y * this->_y + this->_z * this->_z);
+
+        std::copy(vec.begin(), vec.begin() + 3, this->comps.begin());
+        // this->comps[3] = sqrt(this->comps[0] * this->comps[0] + this->comps[1] * this->comps[1] + this->comps[2] * this->comps[2]);
     }
 
     /**
      * @brief Creates a new vector with the same components of the old one.
      * 
      */
-    Vec3::Vec3(const Vec3 &old) : _x(old._x), _y(old._y), _z(old._z), _length(old._length){}
+    Vec3::Vec3(const Vec3 &old) : comps{old.comps} { }
+
+    /**
+     * @brief Construct a new Vec 3 object using move semantic.
+     * 
+     * @param old - The vector to move.
+     */
+    Vec3::Vec3(Vec3 &&old) : comps{std::move(old.comps)} { }
+
+    /**
+     * @brief Copy assignment.
+     * 
+     */
+    Vec3 Vec3::operator = (const Vec3& v){
+        this->comps = v.comps;
+        return *this;
+    }
+
+    /**
+     * @brief Move assignment.
+     * 
+     */
+    Vec3 Vec3::operator = (Vec3&& v){
+        this->comps = std::move(v.comps);
+        return *this;
+    }
 
     /**
      * @brief Componentwise addition.
      * 
      */
     Vec3 Vec3::operator + (const Vec3& v) const{
-        return Vec3(this->_x + v._x, this->_y + v._y, this->_z + v._z);
+        return Vec3(this->comps[0] + v.comps[0], this->comps[1] + v.comps[1], this->comps[2] + v.comps[2]);
     }
 
     /**
@@ -64,8 +97,8 @@ namespace geometry{
      * 
      */
     Vec3 Vec3::operator += (const Vec3& v){
-        this->_x += v._x; this->_y += v._y; this->_z += v._z;
-        this->_length = sqrt(this->_x * this->_x + this->_y * this->_y + this->_z * this->_z);
+        this->comps[0] += v.comps[0]; this->comps[1] += v.comps[1]; this->comps[2] += v.comps[2];
+        // this->comps[3] = sqrt(this->comps[0] * this->comps[0] + this->comps[1] * this->comps[1] + this->comps[2] * this->comps[2]);
         return *this;
     }
 
@@ -74,7 +107,7 @@ namespace geometry{
      * 
      */ 
     Vec3 Vec3::operator - (const Vec3& v) const{
-        return Vec3(this->_x - v._x, this->_y - v._y, this->_z - v._z);
+        return Vec3(this->comps[0] - v.comps[0], this->comps[1] - v.comps[1], this->comps[2] - v.comps[2]);
     }
 
     /**
@@ -82,7 +115,7 @@ namespace geometry{
      * 
      */
     Vec3 Vec3::operator - () const{
-        return Vec3(-this->_x, -this->_y, -this->_z);
+        return Vec3(-this->comps[0], -this->comps[1], -this->comps[2]);
     }
 
     /**
@@ -90,15 +123,15 @@ namespace geometry{
      * 
      */
     Vec3 Vec3::operator * (const float d) const{
-        return Vec3(this->_x * d, this->_y * d, this->_z * d);
+        return Vec3(this->comps[0] * d, this->comps[1] * d, this->comps[2] * d);
     }
 
     /**
      * @brief Multiplication.
      */
     Vec3 Vec3::operator *= (const float d){
-        this->_x *= d; this->_y *= d; this->_z *= d;
-        this->_length = sqrt(this->_x * this->_x + this->_y * this->_y + this->_z * this->_z);
+        this->comps[0] *= d; this->comps[1] *= d; this->comps[2] *= d;
+        this->comps[3] = sqrt(this->comps[0] * this->comps[0] + this->comps[1] * this->comps[1] + this->comps[2] * this->comps[2]);
         return *this;
     }
 
@@ -106,7 +139,7 @@ namespace geometry{
      * @brief Multiplication.
      */
     Vec3 operator * (const float d, const Vec3 &vec){
-        return Vec3(vec._x * d, vec._y * d, vec._z * d);
+        return Vec3(vec.comps[0] * d, vec.comps[1] * d, vec.comps[2] * d);
     }
 
     /**
@@ -114,7 +147,7 @@ namespace geometry{
      * 
      */
     float Vec3::operator * (const Vec3& v) const{
-        return this->_x * v._x + this->_y * v._y + this->_z * v._z;
+        return this->comps[0] * v.comps[0] + this->comps[1] * v.comps[1] + this->comps[2] * v.comps[2];
     }
 
     /**
@@ -124,11 +157,11 @@ namespace geometry{
     float Vec3::operator ^ (const short &n) const{
         switch(n){
             case 1:
-                return this->_x >= this->_y ? 
-                            this->_x >= this->_z ? this->_x : this->_z : 
-                            this->_y >= this->_z ? this->_y : this->_z;
+                return this->comps[0] >= this->comps[1] ? 
+                            this->comps[0] >= this->comps[2] ? this->comps[0] : this->comps[2] : 
+                            this->comps[1] >= this->comps[2] ? this->comps[1] : this->comps[2];
             case 2:
-                return this->_x * this->_x + this->_y * this->_y + this->_z * this->_z;
+                return this->comps[0] * this->comps[0] + this->comps[1] * this->comps[1] + this->comps[2] * this->comps[2];
         }
         return -1;
     }
@@ -138,15 +171,15 @@ namespace geometry{
      * 
      */
     Vec3 Vec3::operator / (const float d) const{
-        return Vec3(this->_x / d, this->_y / d, this->_z / d);
+        return Vec3(this->comps[0] / d, this->comps[1] / d, this->comps[2] / d);
     }
 
     /**
      * @brief Componentwise division.
      */
     Vec3 Vec3::operator /= (const float d){
-        this->_x /= d; this->_y /= d; this->_z /= d;
-        this->_length = sqrt(this->_x * this->_x + this->_y * this->_y + this->_z * this->_z);
+        this->comps[0] /= d; this->comps[1] /= d; this->comps[2] /= d;
+        this->comps[3] = sqrt(this->comps[0] * this->comps[0] + this->comps[1] * this->comps[1] + this->comps[2] * this->comps[2]);
         return *this;
     }
 
@@ -154,14 +187,14 @@ namespace geometry{
      * @brief Vector equality.
      */
     bool Vec3::operator == (const Vec3 &v) const{ 
-        return this->_x == v._x && this->_y == v._y && this->_z == v._z;
+        return this->comps[0] == v.comps[0] && this->comps[1] == v.comps[1] && this->comps[2] == v.comps[2];
     }
 
     /**
      * @brief Vector disequality.
      */
     bool Vec3::operator != (const Vec3 &v) const{
-        return this->_x != v._x || this->_y != v._y || this->_z != v._z;
+        return this->comps[0] != v.comps[0] || this->comps[1] != v.comps[1] || this->comps[2] != v.comps[2];
     }
 
     /**
@@ -170,11 +203,11 @@ namespace geometry{
     float Vec3::operator [] (const int i) const{
         switch (i){
             case 0:
-                return this->_x; break;
+                return this->comps[0]; break;
             case 1:
-                return this->_y; break;
+                return this->comps[1]; break;
             case 2:
-                return this->_z; break;
+                return this->comps[2]; break;
             default:
                 throw std::out_of_range("Vector out of bound exception: The size of the vector is 3.");
         }
@@ -186,7 +219,7 @@ namespace geometry{
      * @return const float& - The x components.
      */
     const float& Vec3::x() const{
-        return this->_x;
+        return this->comps[0];
     }
 
     /**
@@ -195,7 +228,7 @@ namespace geometry{
      * @return const float& - The y components.
      */
     const float& Vec3::y() const{
-        return this->_y;
+        return this->comps[1];
     }
 
     /**
@@ -204,7 +237,7 @@ namespace geometry{
      * @return const float& - The z components.
      */
     const float& Vec3::z() const{
-        return this->_z;
+        return this->comps[2];
     }
 
     /**
@@ -212,8 +245,9 @@ namespace geometry{
      * 
      * @return const float& - The length.
      */
-    const float& Vec3::length() const{
-        return this->_length;
+    float Vec3::length() const{
+        return sqrt(this->comps[0] * this->comps[0] + this->comps[1] * this->comps[1] + this->comps[2] * this->comps[2]);
+        // return this->comps[3];
     }
 
     /**
@@ -222,7 +256,7 @@ namespace geometry{
      * @return Vec3 - A vector with the normalized component of the vector on which the method has been called.
      */
     Vec3 Vec3::normalize() const{
-        const float norm = sqrt(this->_x * this->_x + this->_y * this->_y + this->_z * this->_z);
+        const float norm = this->length();
         if(norm != 0)
             return *this / norm;
         return Vec3{*this};
@@ -233,16 +267,16 @@ namespace geometry{
      * 
      */
     Vec3 Vec3::multiplication(const Vec3 &vec) const{
-        return Vec3{this->_x * vec._x, this->_y * vec._y, this->_z * vec._z};
+        return Vec3{this->comps[0] * vec.comps[0], this->comps[1] * vec.comps[1], this->comps[2] * vec.comps[2]};
     }
 
     /**
      * @brief Cross product.
      */
     Vec3 Vec3::cross(const Vec3 &vec) const{
-        return Vec3{this->_y * vec._z - this->_z * vec._y, 
-                    this->_z * vec._x - this->_x * vec._z, 
-                    this->_x * vec._y - this->_y * vec._x};
+        return Vec3{this->comps[1] * vec.comps[2] - this->comps[2] * vec.comps[1], 
+                    this->comps[2] * vec.comps[0] - this->comps[0] * vec.comps[2], 
+                    this->comps[0] * vec.comps[1] - this->comps[1] * vec.comps[0]};
     }
 
     /**
@@ -252,7 +286,7 @@ namespace geometry{
      * @return float - The euclidean distance between two vectors.
      */
     float Vec3::distance(const Vec3 &vec) const{
-        float disx = vec._x - this->_x, disy = vec._y - this->_y, disz = vec._z - this->_z;
+        float disx = vec.comps[0] - this->comps[0], disy = vec.comps[1] - this->comps[1], disz = vec.comps[2] - this->comps[2];
         return sqrt(disx * disx + disy * disy + disz * disz);
     }
 
@@ -263,7 +297,8 @@ namespace geometry{
      * @return Vec3 projection - The projection.
      */
     Vec3 Vec3::projection(const Vec3 &vec) const{
-        return ((*this * vec) / (this->_length * this->_length)) * *this;
+        float length = this->length();
+        return ((*this * vec) / (length * length)) * *this;
     }
 
 
@@ -274,10 +309,10 @@ namespace geometry{
      * @param max - The max value.
      */
     void Vec3::clamp(const float min, const float max){
-        this->_x = this->_x > max ? max : this->_x < min ? min : this->_x;
-        this->_y = this->_y > max ? max : this->_y < min ? min : this->_y;
-        this->_z = this->_z > max ? max : this->_z < min ? min : this->_z;
-        this->_length = sqrt(this->_x * this->_x + this->_y * this->_y + this->_z * this->_z);
+        this->comps[0] = this->comps[0] > max ? max : this->comps[0] < min ? min : this->comps[0];
+        this->comps[1] = this->comps[1] > max ? max : this->comps[1] < min ? min : this->comps[1];
+        this->comps[2] = this->comps[2] > max ? max : this->comps[2] < min ? min : this->comps[2];
+        // this->comps[3] = sqrt(this->comps[0] * this->comps[0] + this->comps[1] * this->comps[1] + this->comps[2] * this->comps[2]);
     }
 
     /**
@@ -288,12 +323,12 @@ namespace geometry{
      */
     void Vec3::makeInteger(const bool useFloor){
         if(useFloor){
-            this->_x = floor(this->_x); this->_y = floor(this->_y); this->_z = floor(this->_z); 
+            this->comps[0] = floor(this->comps[0]); this->comps[1] = floor(this->comps[1]); this->comps[2] = floor(this->comps[2]); 
         }
         else{
-            this->_x = ceil(this->_x); this->_y = ceil(this->_y); this->_z = ceil(this->_z); 
+            this->comps[0] = ceil(this->comps[0]); this->comps[1] = ceil(this->comps[1]); this->comps[2] = ceil(this->comps[2]); 
         }
-        this->_length = sqrt(this->_x * this->_x + this->_y * this->_y + this->_z * this->_z);
+        // this->comps[3] = sqrt(this->comps[0] * this->comps[0] + this->comps[1] * this->comps[1] + this->comps[2] * this->comps[2]);
     }
 
     /**
@@ -302,7 +337,7 @@ namespace geometry{
      */
     std::ostream& operator << (std::ostream &os, const Vec3 &vec)
     {
-        os << vec._x << ' ' << vec._y << ' ' << vec._z;
+        os << vec.comps[0] << ' ' << vec.comps[1] << ' ' << vec.comps[2];
         return os;
     }
 
@@ -313,7 +348,7 @@ namespace geometry{
      * @return Vec3 - The vector transformed.
      */
     Vec3 Vec3::map(std::function<float(float)> func){
-        return {func(this->_x), func(this->_y), func(this->_z)};
+        return {func(this->comps[0]), func(this->comps[1]), func(this->comps[2])};
     }
 }
 }

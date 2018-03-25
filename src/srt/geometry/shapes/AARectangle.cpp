@@ -29,7 +29,7 @@ namespace shapes{
      */
     AARectangle::AARectangle(const AARectangle::Type type, const float a0_0, const float a0_1, const float a1_0, const float a1_1, 
         const float k, const std::shared_ptr<materials::Material> material, bool flipNormal) :
-        type(type), axis0_0(a0_0), axis0_1(a0_1), axis1_0(a1_0), axis1_1(a1_1), k(k), material(material), isNormalFlipped(flipNormal) { }
+        type(type), axis0_0(a0_0), axis0_1(a0_1), axis1_0(a1_0), axis1_1(a1_1), k(k), material(material), isNormalFlipped(flipNormal){ }
     
     
     /**
@@ -89,7 +89,7 @@ namespace shapes{
             hitPoint[a1] < this->axis1_0 || hitPoint[a1] > this->axis1_1)
             return Hitable::NO_HIT;
         
-        return {true, t, this};
+        return {true, t, this, ray.getPoint(t), this->getNormal(ray.getPoint(t))};
     }
 
     /**
@@ -97,7 +97,7 @@ namespace shapes{
      * 
      * @return const Material& - The material of the rectangle.
      */
-    const std::shared_ptr<materials::Material> AARectangle::getMaterial() const{
+    const std::shared_ptr<materials::Material>& AARectangle::getMaterial() const{
         return this->material;
     }
 

@@ -55,7 +55,7 @@ namespace materials{
      * @brief Computes a refracted ray.
      * 
      * @param ray - The ray to refract.
-     * @param normal - The normal of the hitted point.
+     * @param normal - The normal of the hit point.
      * @param refractivity - The refractivity factor.
      * @return true - If the ray could be refract.
      * @return false - If the ray could not be refract.

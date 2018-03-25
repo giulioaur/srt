@@ -28,10 +28,14 @@ set(SRT_FILES ${MYBASE_DIR}/Ray.cpp
               ${MYBASE_DIR}/Hitable.cpp )
 set(GEOMETRY_FILES ${GEOMETRY_DIR}/Plane.cpp
                ${GEOMETRY_DIR}/Vec3.cpp
+               ${GEOMETRY_DIR}/Mat3.cpp
                ${GEOMETRY_DIR}/AABB.cpp
                ${GEOMETRY_DIR}/shapes/Sphere.cpp
                ${GEOMETRY_DIR}/shapes/MovingSphere.cpp
-               ${GEOMETRY_DIR}/shapes/AARectangle.cpp)
+               ${GEOMETRY_DIR}/shapes/AARectangle.cpp
+               ${GEOMETRY_DIR}/shapes/AABox.cpp
+               ${GEOMETRY_DIR}/instances/Translation.cpp
+               ${GEOMETRY_DIR}/instances/Rotation.cpp)
 #set(ILLUMINATION_FILES ${ILLUMINATION_DIR}/lights/Light.cpp
 #                       ${ILLUMINATION_DIR}/lights/Spotlight.cpp
 #                       ${ILLUMINATION_DIR}/pm/Photon.cpp

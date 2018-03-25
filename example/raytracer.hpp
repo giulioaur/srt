@@ -44,27 +44,27 @@ void shot_photons(PMScene &scene){
             int hitLight;
 
             // Check if the photon intersect something.
-            auto hittedObj = scene.intersection({photonStart, photonDir}, hitLight);
+            auto hitObj = scene.intersection({photonStart, photonDir}, hitLight);
 
-            while (hittedObj != nullptr && ++currBounce <= MAX_PHOTON_BOUNCES){
+            while (hitObj != nullptr && ++currBounce <= MAX_PHOTON_BOUNCES){
                 const float destiny = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-                photonStart = *hittedObj->intersection({photonStart, photonDir}); // The new start point is the intersection one.
+                photonStart = *hitObj->intersection({photonStart, photonDir}); // The new start point is the intersection one.
                 photonColor = photonColor.multiplication( 
-                    1.f / currBounce * hittedObj->getColor(photonStart)); 
+                    1.f / currBounce * hitObj->getColor(photonStart)); 
 
                 // Store the photon only if it came from indirect illumination.
                 if(currBounce > 1)  
                     scene.storePhoton({photonStart, photonDir, photonColor});
 
                 if(destiny <= 0.5){ // Absorbed.
-                    hittedObj = {};
+                    hitObj = {};
                 }
                 else{ // Diffused
                     // Compute new random direction of reflection (Lambert's law)
                     photonDir = randomDir();
                     // Be sure the photon does not bounce behind the object.
-                    if(hittedObj->getNormal(photonStart) * photonDir < 0)   photonDir = -photonDir;
-                    hittedObj = scene.intersection({photonStart, photonDir}, hitLight);
+                    if(hitObj->getNormal(photonStart) * photonDir < 0)   photonDir = -photonDir;
+                    hitObj = scene.intersection({photonStart, photonDir}, hitLight);
                 }
             }
         }

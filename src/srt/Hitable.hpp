@@ -31,15 +31,18 @@ public:
      * 
      */
     typedef struct hr{
-        bool hitted;
+        bool hit;
         float t;
         Hitable const* object;
+        geometry::Vec3 point, normal;
         
-        hr(bool h, float t, Hitable const *obj) : hitted(h), t(t), object(obj) {}
+        hr(bool h, float t, Hitable const *obj, const geometry::Vec3 &point, const geometry::Vec3 &normal) : 
+            hit(h), t(t), object(obj), point(point), normal(normal) {}
     } hit_record;
 
     // The record for no hit situation.
     static const hit_record NO_HIT;
+    static const std::shared_ptr<materials::Material> NO_MATERIAL;
 
     // METHODS
  
@@ -54,20 +57,12 @@ public:
     virtual Hitable::hit_record intersection(const Ray &ray, const float tmin, const float tmax) const = 0;
 
     /**
-     * @brief Gets the normal of the object in a given point.
-     * 
-     * @param pos - The position from which computes the normal.
-     * @return geometry::Vec3 - The normal in that point.
-     */
-    virtual geometry::Vec3 getNormal(const srt::geometry::Vec3 &pos) const = 0;
-
-    /**
      * @brief Get the Material of the object.
      * 
      * @return const Material& - The material of the object.
      */
-    virtual const std::shared_ptr<materials::Material> getMaterial() const{
-        return nullptr;
+    virtual const std::shared_ptr<materials::Material> &getMaterial() const{
+        return NO_MATERIAL;
     }
 
     /**

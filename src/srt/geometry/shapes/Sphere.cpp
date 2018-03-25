@@ -36,7 +36,7 @@ namespace shapes{
      * 
      * @param old - The old sphere.
      */
-    Sphere::Sphere(const Sphere &old) : center(old.center), radius(old.radius){}
+    Sphere::Sphere(const Sphere &old) : center(old.center), radius(old.radius) { }
     
     /**
      * @brief Sphere equality.
@@ -102,7 +102,7 @@ namespace shapes{
             else                        t = max(t0, t1);
         }
 
-        if(t >= tmin && t <= tmax)  return {true, t, this}; 
+        if(t >= tmin && t <= tmax)  return {true, t, this, ray.getPoint(t), this->getNormal(ray.getPoint(t))}; 
         return Hitable::NO_HIT; 
     }
 
@@ -121,7 +121,7 @@ namespace shapes{
      * 
      * @return const Material& - The material of the spheres.
      */
-    const std::shared_ptr<materials::Material> Sphere::getMaterial() const{
+    const std::shared_ptr<materials::Material>& Sphere::getMaterial() const{
         return this->material;
     }
 
@@ -132,14 +132,13 @@ namespace shapes{
      *                                          if it does not exist.
      */
     std::unique_ptr<geometry::AABB> Sphere::getAABB(const float t0, const float t1) const{
-        const Vec3 radVec{this->radius, this->radius, this->radius};
-        return make_unique<AABB>(this->center - radVec, this->center + radVec);
+        return make_unique<AABB>(this->center - Vec3{radius}, this->center + Vec3{radius});
     }
     
     /**
      * @brief Returns the u/v coords of a texture sphere in a given point.
      * 
-     * @param p - The point hitted in the sphere.
+     * @param p - The point hit in the sphere.
      * @return geometry::Vec3 - The vector in which x = u, y = v and z = 0.
      */
     Vec3 Sphere::getTextureCoords(const Vec3 &p) const{
