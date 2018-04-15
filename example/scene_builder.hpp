@@ -22,6 +22,7 @@ using namespace srt::geometry::instances;
 using namespace srt::textures;
 using namespace srt::materials;
 using namespace srt::materials::lights;
+using namespace srt::ds;
 
 Scene random_scene(const float width, const float height){
     Scene scene{width, height, "result"};
@@ -33,10 +34,10 @@ Scene random_scene(const float width, const float height){
     for (short a = -11; a < 11; a++) {
         for (short b = -11; b < 11; b++) {
             float choose_mat = drand48();
-            Vec3 center{a+0.9*drand48(),0.2,b+0.9*drand48()}; 
-            if ((center-Vec3(4,0.2,0)).length() > 0.9) { 
+            Vec3 center{a+0.9*drand48(),0.2,b+0.9*drand48()};
+            if ((center-Vec3(4,0.2,0)).length() > 0.9) {
                 shared_ptr<Material> material;
-                if (choose_mat < 0.8) {         // Diffuse 
+                if (choose_mat < 0.8) {         // Diffuse
                     material = make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}));
                 }
                 else if (choose_mat < 0.95) {   // Metal
@@ -59,6 +60,63 @@ Scene random_scene(const float width, const float height){
     spheres.push_back(make_shared<Sphere>(Vec3{4, 1, 0}, 1.0, make_shared<Metal>(Vec3{0.7, 0.6, 0.5}, 0.0)));
 
     scene.addHitables(spheres);
+    scene.buildBVH();
+    return scene;
+}
+
+Scene my_random_scene(const float width, const float height, const size_t n){
+    Scene scene{width, height, "my_random_scene"};
+    float radius = 7;
+    short start = -600 + radius;
+    float step = (1200 - 2 * radius) / n;
+    vector<shared_ptr<Hitable>> objects;
+    objects.reserve(n+1);
+    // Floor
+    objects.push_back(make_shared<AARectangle>(AARectangle::XZ, -700, 700, 0, 2000, 0, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.4, 0.2, 0.1}))));
+    // objects.push_back(make_shared<AARectangle>(AARectangle::XZ, -600, 600, 0, 1500, 0, make_shared<Lambertian>(make_shared<CheckerTexture>())));
+
+    for(size_t i = 0; i < n; ++i){
+        shared_ptr<Material> material;
+        // Choose an x to be sure the circles are not intersected.
+        float x = start + i * step + drand48() * (step - radius);
+
+        material = make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}));
+
+        objects.push_back(make_shared<Sphere>(Vec3{x, radius, drand48() * 1800}, radius, material));
+    }
+
+    // End scene.
+    scene.addHitables(objects);
+    scene.buildBVH();
+    return scene;
+}
+
+Scene BVH_scene(const float width, const float height){
+    Scene scene{width, height, "BVH_scene"};
+    vector<shared_ptr<Hitable>> objects;
+
+    // objects.push_back(make_shared<Sphere>(Vec3{0, 200, 200}, 200, make_shared<Dielectric>(1)));
+    // objects.push_back(make_shared<Sphere>(Vec3{0, 100, 500}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    // objects.push_back(make_shared<Sphere>(Vec3{250, 100, 150}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+
+    // objects.push_back(make_shared<AABox>(Vec3{-65, 0, 0}, Vec3{100, 165, 165}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    // objects.push_back(make_shared<AABox>(Vec3{-65, 0, 166}, Vec3{100, 215, 331}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    // objects.push_back(make_shared<AABox>(Vec3{-350, 100, 150}, Vec3{-250, 165, 305}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    // objects.push_back(make_shared<AABox>(Vec3{250, 200, 300}, Vec3{425, 295, 465}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    // objects.push_back(make_shared<AABox>(Vec3{-300, -100, 50}, Vec3{300, -50, 105}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    
+    objects.push_back(make_shared<Sphere>(Vec3{0, 100, 500}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{200, 175, 350}, 30, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{-200, 200, 100}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{150, -30, 50}, 40, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{-180, -15, 250}, 70, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+
+    BVH tempTree{objects, 0, 1};
+    vector<shared_ptr<Hitable>> bvhSquares = tempTree.draw();
+    objects.insert(objects.end(), bvhSquares.begin(), bvhSquares.end());
+
+    // End scene.
+    scene.addHitables(objects);
     scene.buildBVH();
     return scene;
 }

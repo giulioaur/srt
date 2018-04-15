@@ -22,6 +22,7 @@ private:
     // ATTRIBUTES
 
     float refractivity;
+    geometry::Vec3 attenuation;
 
     // METHODS
     float schlick(const float cos, const float refractivity) const;
@@ -30,8 +31,7 @@ private:
 public:
     //CONSTRUCTORS
 
-    Dielectric(const float refractivity);
-    Dielectric(const Dielectric &old);
+    Dielectric(const float refractivity, const geometry::Vec3 &attenuation = {1, 1, 1});
 
     // METHODS
     bool scatter(Ray &ray, geometry::Vec3 &attenuation, const geometry::Vec3 &hitPoint, 

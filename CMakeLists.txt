@@ -26,9 +26,9 @@ set(SRT_FILES ${MYBASE_DIR}/Ray.cpp
               ${MYBASE_DIR}/Scene.cpp
               ${MYBASE_DIR}/Camera.cpp
               ${MYBASE_DIR}/Hitable.cpp )
-set(GEOMETRY_FILES ${GEOMETRY_DIR}/Plane.cpp
-               ${GEOMETRY_DIR}/Vec3.cpp
-               ${GEOMETRY_DIR}/Mat3.cpp
+set(GEOMETRY_FILES #${GEOMETRY_DIR}/Plane.cpp
+              # ${GEOMETRY_DIR}/Vec3.cpp
+              #  ${GEOMETRY_DIR}/Mat3.cpp
                ${GEOMETRY_DIR}/AABB.cpp
                ${GEOMETRY_DIR}/shapes/Sphere.cpp
                ${GEOMETRY_DIR}/shapes/MovingSphere.cpp

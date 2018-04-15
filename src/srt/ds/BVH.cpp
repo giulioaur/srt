@@ -11,9 +11,14 @@
 
 // Other system includes
 #include <algorithm>
+#include <queue>
 
 // My other includes
 #include "../utility/Randomizer.hpp"
+#include "../geometry/shapes/AABox.hpp"
+#include "../materials/Dielectric.hpp"
+
+#define MAX_LEVEL 3
 
 namespace srt{
 namespace ds{
@@ -33,14 +38,6 @@ namespace ds{
      */
     BVH::BVH(std::vector<std::shared_ptr<Hitable>> &hitables, const float t0, const float t1) : 
         BVH(hitables, 0, hitables.size() - 1, t0, t1){ }
-
-    /**
-     * @brief Construct a new BVH object equal to a passed one. The new tree is build coping the
-     *        pointers, so no new object is build.
-     * 
-     * @param old - The BVH to copy.
-     */ 
-    BVH::BVH(const BVH &old) : left(old.left), right(old.right), box(old.box){ }
 
     struct axis_comparator
     {
@@ -124,5 +121,50 @@ namespace ds{
     std::unique_ptr<geometry::AABB> BVH::getAABB(const float t0, const float t1) const{
         return std::make_unique<geometry::AABB>(this->box);
     }
+
+    std::shared_ptr<Hitable> getShapeFromBox(const geometry::AABB &box, const int level){
+        const float green = 1 - level / MAX_LEVEL * 0.3, red = 1 - (MAX_LEVEL - level) / MAX_LEVEL * 0.3;
+        const std::shared_ptr<materials::Material> mat = std::make_shared<materials::Dielectric>(1, geometry::Vec3{0.89, 0.89, 0.89});
+        
+        // Use front face.
+        // using rectangle = geometry::shapes::AARectangle;
+        // const geometry::Vec3 min = box.getMin(), max = box.getMax();
+        // return std::make_shared<rectangle>(rectangle::XY, min.x(), max.x(), min.y(), max.y(), min.z() - 2, mat);
+
+        // Use box.
+        return std::make_shared<geometry::shapes::AABox>(box.getMin(), box.getMax(), mat);
+    }
+
+    /**
+     * @brief Used to build squares vector with recursion.
+     */
+    void BVH::draw_slave(std::vector<std::shared_ptr<Hitable>> &squares, const int level) const{
+
+        // Add rectangle.
+        squares.push_back(getShapeFromBox(this->box, level));
+
+        // Check if the function need to be recalled on children.
+        if (const BVH* leftSon = dynamic_cast<BVH*>(&*this->left))
+            leftSon->draw_slave(squares, level + 1);
+        else
+            squares.push_back(getShapeFromBox(*this->left->getAABB(0, 1), level + 1));
+
+        if (const BVH* rightSon = dynamic_cast<BVH*>(&*this->right))
+            rightSon->draw_slave(squares, level + 1);
+        else
+            squares.push_back(getShapeFromBox(*this->right->getAABB(0, 1), level + 1));
+    }
+
+    /**
+     * @brief Returns a vector of hitable to draw the BVH as transparent square. 
+     *        The square used is the front face of the box. The color of the square depends on the depth of the box it represents.
+     * 
+     * @return std::vector<std::shared_ptr<Hitable>> 
+     */
+    std::vector<std::shared_ptr<Hitable>> BVH::draw() const{
+        std::vector<std::shared_ptr<Hitable>> squares;
+        draw_slave(squares, 0);
+        return squares;
+    }   
 }
 }

@@ -24,7 +24,7 @@ namespace utility{
      * @param max - The upper bound of the interval.
      * @return float - The random number.
      */
-    float Randomizer::randomRange(const float min, const float max){
+    inline float Randomizer::randomRange(const float min, const float max){
         double value = (double)rand() / RAND_MAX;
         return min + value * (max - min);
     }
@@ -34,12 +34,7 @@ namespace utility{
      * 
      * @return Vec3 - A random point in unit sphere.
      */
-    Vec3 Randomizer::randomInUnitSphere(){
-        // // Not uniform
-        // Vec3 p;
-        // p = 2. * Vec3{drand48(), drand48(), drand48()} - Vec3{1, 1, 1};
-        // return p.normalize();
-
+    inline Vec3 Randomizer::randomInUnitSphere(){
         // Marsiglia's formula
         float x1, x2, sos = 2;
         while(sos >= 1){

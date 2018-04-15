@@ -21,9 +21,16 @@ using namespace srt::geometry::shapes;
 using namespace srt::illumination::lights;
 using namespace srt::utility;
 
+
 /**************************************** DEFINE ****************************************/
 
-#define SAMPLES 1000
+#define RANDOM_SCENE 0
+#define CORNELL_SCENE 1
+#define MY_RANDOM_SCENE 2
+#define BVH_SCENE 3
+#define TARGET_SCENE BVH_SCENE
+
+#define SAMPLES 100
 #define MAX_DEPTH 50
 
 /**************************************** TYPEDEF ****************************************/
@@ -57,19 +64,19 @@ int main(int argc, char **argv){
         // PMScene scene{100, 200, "test"};
         // Scene scene = build_scenes(FILES_DIR + "scenes/" + files[i]);
 
+        #if TARGET_SCENE == RANDOM_SCENE
         // Random scene.
-        // Scene scene = random_scene();
-
-        // Scene to test texture.
-        // Scene scene{400, 400, "image_test"};
-        // scene.addHitables({make_shared<Sphere>(Vec3{0, 0, 0}, 2, make_shared<Lambertian>(make_shared<ImageTexture>(FILES_DIR + "textures/earth.jpg")))});
-        // scene.buildBVH();
-
-        // Scene to test light.
-        // Scene scene = light_scene();
-
+        Scene scene = random_scene(512, 384);
+        #elif TARGET_SCENE == CORNELL_SCENE
         // Cornell box.
         Scene scene = cornell_box(580, 720);
+        #elif TARGET_SCENE == MY_RANDOM_SCENE
+        // My random scene.
+        Scene scene = my_random_scene(512, 384, 1000);
+        #elif TARGET_SCENE == BVH_SCENE
+        // BVH scene.
+        Scene scene = BVH_scene(512, 384);
+        #endif
 
         cout << "...Ending scene creation in " << sw1.end() << "sec..." << endl;
 
@@ -115,16 +122,30 @@ Vec3 color(const Ray &ray, const Scene &scene){
         container = scene.intersection(currRay, 0.001, MAX_FLOAT);
     }
 
-    // float t = 0.5 * (currRay.getDirection().y() + 1);
-    // return color.multiplication((1 - t ) * Vec3{1, 1, 1} + t * Vec3{0.5, 0.7, 1.});
+
+    #if TARGET_SCENE == CORNELL_SCENE
     return {0, 0, 0};
+    #else
+    float t = 0.5 * (currRay.getDirection().y() + 1);
+    return color.multiplication((1 - t ) * Vec3{1, 1, 1} + t * Vec3{0.5, 0.7, 1.});
+    #endif
 }
 
 pixel_vector raytracing(Scene &scene, const Vec3 &origin){
+    #if TARGET_SCENE == RANDOM_SCENE
     // Random scene camera.
-    //Vec3 lookFrom{13, 2, 3}, lookAt{0, 0, 0};
+    Vec3 lookFrom{13, 2, 3}, lookAt{0, 0, 0};
+    #elif TARGET_SCENE == CORNELL_SCENE
     // Cornell box camera.
     Vec3 lookFrom{278, 278, -800}, lookAt{278, 278, 0};
+    #elif TARGET_SCENE == MY_RANDOM_SCENE
+    // My random scene camera.
+    Vec3 lookFrom{0, 650, -850}, lookAt{0, 250, 0};
+    #elif TARGET_SCENE == BVH_SCENE
+    // My random scene camera.
+    Vec3 lookFrom{0, 150, -600}, lookAt{0, 100, 0};
+    #endif
+    
     float focus = 10, aperture = 0, vfov = 40;
     const size_t height = scene.getHeight(), width = scene.getWidth();
     Camera cam{lookFrom, lookAt, {0, 1, 0}, vfov, width / float(height), aperture, focus, 0, 1};

@@ -22,6 +22,13 @@ namespace shapes{
 
 /// This class represents an axis aligned box.
 class AABox : public Hitable{
+public:
+    // ENUMERATIONS
+
+    /// The type of the box face.
+    /// The directions refer to the viewpoint of a spectator that face the XY faces with negative normal.
+    enum Face {BACK_FACE, FRONT_FACE, UP_FACE, BOT_FACE, RIGHT_FACE, LEFT_FACE};
+
 private:
     // ATTRIBUTES
 
@@ -32,13 +39,13 @@ public:
     // CONSTRUCTORS
 
     AABox(const Vec3 &min, const Vec3 &max, const std::shared_ptr<materials::Material> material);
-    AABox(const AABox &old);
 
     // METHODS
 
     virtual Hitable::hit_record intersection(const srt::Ray &ray, const float tmin, const float tmax) const;
-    virtual std::unique_ptr<geometry::AABB> getAABB(const float t0, const float t1) const;
-    virtual geometry::Vec3 getTextureCoords(const geometry::Vec3 &p) const;
+    virtual std::unique_ptr<AABB> getAABB(const float t0, const float t1) const;
+    virtual Vec3 getTextureCoords(const Vec3 &p) const;
+    const AARectangle &getFace(Face face);
 };
 
 }

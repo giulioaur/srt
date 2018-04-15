@@ -30,7 +30,6 @@ public:
     //CONSTRUCTORS
 
     Metal(const geometry::Vec3 &albedo, const float fuziness);
-    Metal(const Metal &old);
 
     // METHODS
     bool scatter(Ray &ray, geometry::Vec3 &attenuation, const geometry::Vec3 &hitPoint, 

@@ -38,7 +38,6 @@ public:
     
     Scene(const float width, const float height, const std::string &name, 
             const float t0 = 0, const float t1 = 1);
-    Scene(const Scene &scene);
     
     // METHODS
 

@@ -28,17 +28,9 @@ namespace shapes{
                  AARectangle(AARectangle::XY, min.x(), max.x(), min.y(), max.y(), min.z(), material, true),
                  AARectangle(AARectangle::XZ, min.x(), max.x(), min.z(), max.z(), max.y(), material),
                  AARectangle(AARectangle::XZ, min.x(), max.x(), min.z(), max.z(), min.y(), material, true),
-                 AARectangle(AARectangle::YZ, min.y(), max.y(), min.z(), max.z(), min.x(), material, true),
-                 AARectangle(AARectangle::YZ, min.y(), max.y(), min.z(), max.z(), max.x(), material)}}, 
-        min(min), max(max) { } 
-    
-    
-    /**
-     * @brief Construct a new AABox object equal to an old one.
-     * 
-     * @param old - The rectangle to copy.
-     */
-    AABox::AABox(const AABox &old) : sides(old.sides), min(old.min), max(old.max) { }
+                 AARectangle(AARectangle::YZ, min.y(), max.y(), min.z(), max.z(), max.x(), material),
+                 AARectangle(AARectangle::YZ, min.y(), max.y(), min.z(), max.z(), min.x(), material, true)}}, 
+        min(min), max(max) { }
 
     /**
      * @brief Computes the intersection between the emitted ray and the box.
@@ -74,12 +66,12 @@ namespace shapes{
     }
 
     /**
-     * @brief Get the Texture Coords of the box in a given point.
+     * @brief Gets the Texture Coords of the box in a given point.
      * 
      * @param p - The point hit on the box.
      * @return geometry::Vec3 - The texture coords.
      */
-    geometry::Vec3 AABox::getTextureCoords(const geometry::Vec3 &p) const{
+    Vec3 AABox::getTextureCoords(const Vec3 &p) const{
         return p.z() == max.z() ? sides[0].getTextureCoords(p) :
                p.z() == min.z() ? sides[1].getTextureCoords(p) :
                p.y() == max.y() ? sides[2].getTextureCoords(p) :
@@ -88,6 +80,15 @@ namespace shapes{
                sides[5].getTextureCoords(p) ;
     }
 
+    /**
+     * @brief Returns a face of the box.
+     * 
+     * @param face - The face to return.
+     * @return const AARectangle& - The desired face.
+     */
+    const AARectangle& AABox::getFace(Face face){
+        return this->sides[face];
+    }
 }
 }
 }

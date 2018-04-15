@@ -30,7 +30,6 @@ public:
 
     MovingSphere(const srt::geometry::Vec3 &c0, const srt::geometry::Vec3 &c1, const float t0,
         const float t1, const float ray, const std::shared_ptr<materials::Material> material);
-    MovingSphere(const MovingSphere &old);
 
     // OPERATORS
 

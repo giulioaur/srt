@@ -35,13 +35,6 @@ namespace textures{
         c0(c0), c1(c1) {} 
 
     /**
-     * @brief Constructs a new Checker Texture with the same colors of the passed one.
-     * 
-     * @param old - The texture from which copy the colors.
-     */
-    CheckerTexture::CheckerTexture(const CheckerTexture &old) : c0(old.c0), c1(old.c1) {}
-
-    /**
      * @brief Return an RGB value that represents the color of the texture in that point.
      * 
      * @param u - The x texture coord. Ranged from 0 to 1.

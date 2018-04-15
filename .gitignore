@@ -59,6 +59,8 @@ src/srt/geometry/shapes/Circle.cpp
 src/srt/geometry/shapes/Circle.hpp
 src/srt/geometry/shapes/Rectangle.cpp
 src/srt/geometry/shapes/Rectangle.hpp
+src/srt/geometry/Vec3.cpp
+src/srt/geometry/Mat3.cpp
 
 # Light
 src/srt/illumination

@@ -42,14 +42,6 @@ namespace srt{
         height(height), width(width), name(name), t0(t0), t1(t1) { }
 
     /**
-     * @brief Creates a scene equal to a given one.
-     * 
-     * @param scene - The scene to copy.
-     */
-    Scene::Scene(const Scene &scene) : height(scene.height), width(scene.width), name(scene.name),
-        t0(t0), t1(t1), hitables(scene.hitables), hitablesTree(scene.hitablesTree) {}
-
-    /**
      * @brief Returns the height of the scene.
      * 
      * @return short - The height of the scene.

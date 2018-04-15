@@ -28,17 +28,18 @@ private:
  
     // METHODS
     BVH(std::vector<std::shared_ptr<Hitable>> &hitables, size_t start, size_t end, const float t0, const float t1);
+    void draw_slave(std::vector<std::shared_ptr<Hitable>> &squares, const int level) const;
 public:
     // CONSTRUCTORS
 
     BVH();
     BVH(std::vector<std::shared_ptr<Hitable>> &hitables, const float t0, const float t1);
-    BVH(const BVH &old);
 
     // METHODS
 
-    virtual Hitable::hit_record intersection(const Ray &ray, const float tmin, const float tmax) const;
-    virtual std::unique_ptr<geometry::AABB> getAABB(const float t0, const float t1) const;
+    Hitable::hit_record intersection(const Ray &ray, const float tmin, const float tmax) const;
+    std::unique_ptr<geometry::AABB> getAABB(const float t0, const float t1) const;
+    std::vector<std::shared_ptr<Hitable>> draw() const;
 };
 
 }

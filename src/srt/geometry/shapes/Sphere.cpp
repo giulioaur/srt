@@ -30,13 +30,6 @@ namespace shapes{
      */
     Sphere::Sphere(const Vec3 &center, const float radius, const shared_ptr<Material> material) : 
         center(center), radius(radius), material(material) { }
-
-    /**
-     * @brief Creates a new sphere with the same center and ray of an old one.
-     * 
-     * @param old - The old sphere.
-     */
-    Sphere::Sphere(const Sphere &old) : center(old.center), radius(old.radius) { }
     
     /**
      * @brief Sphere equality.

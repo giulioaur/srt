@@ -30,20 +30,6 @@ namespace textures{
     }
 
     /**
-     * @brief Constructs a new Image Texture object equal to an old one.
-     * 
-     * @param old - The Image texture to copy.
-     */
-    ImageTexture::ImageTexture(const ImageTexture &old) : data(old.data), w(old.w), h(old.h) { }
-
-    /**
-     * @brief Constructs a new Image Texture object using move semantics.
-     * 
-     * @param old - The Image texture to move.
-     */
-    ImageTexture::ImageTexture(const ImageTexture &&old) : data(std::move(old.data)), w(old.w), h(old.h) { }
-
-    /**
      * @brief Returns an RGB value that represents the color of the image in that point.
      * 
      * @param u - The x texture coord. Ranged from 0 to 1.

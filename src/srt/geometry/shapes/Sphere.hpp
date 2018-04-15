@@ -32,7 +32,6 @@ public:
     // CONSTRUCTORS
 
     Sphere(const Vec3 &center, const float radius, const std::shared_ptr<materials::Material> material);
-    Sphere(const Sphere &old);
 
     // OPERATORS
 

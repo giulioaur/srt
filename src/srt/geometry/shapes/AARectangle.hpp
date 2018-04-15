@@ -38,7 +38,6 @@ public:
 
     AARectangle(const AARectangle::Type type, const float a0_0, const float a0_1, const float a1_0, const float a1_1, 
                 const float k, const std::shared_ptr<materials::Material> material, bool flipNormal = false);
-    AARectangle(const AARectangle &old);
 
     // METHODS
 

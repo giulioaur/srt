@@ -29,8 +29,6 @@ public:
     // CONSTRUCTORS
 
     ImageTexture(const std::string &imagePath);
-    ImageTexture(const ImageTexture &old);
-    ImageTexture(const ImageTexture &&old);
 
     // METHODS
 

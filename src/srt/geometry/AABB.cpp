@@ -30,13 +30,6 @@ namespace geometry{
     AABB::AABB(const Vec3 &min, const Vec3 &max) : min(min), max(max) {}
 
     /**
-     * @brief Creates a new boundig box with the same size and position of an old one.
-     * 
-     * @param old - The bounding box to copy.
-     */
-    AABB::AABB(const AABB &old) : min(old.min), max(old.max) {}
-
-    /**
      * @brief Returns the lower right corner.
      * 
      * @return const Vec3& - The lower right corner.

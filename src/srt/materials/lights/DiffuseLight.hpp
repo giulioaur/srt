@@ -28,7 +28,6 @@ public:
     //CONSTRUCTORS
 
     DiffuseLight(const std::shared_ptr<textures::Texture> &albedo);
-    DiffuseLight(const DiffuseLight &old);
 
     // METHODS
     const std::shared_ptr<textures::Texture> getAlbedo();

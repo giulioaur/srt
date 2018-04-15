@@ -33,14 +33,6 @@ namespace shapes{
         c0(c0), c1(c1), t0(t0), t1(t1){ }
 
     /**
-     * @brief Creates a new sphere with the same center and ray of an old one.
-     * 
-     * @param old - The old sphere.
-     */
-    MovingSphere::MovingSphere(const MovingSphere &old) : Sphere(old), c0(old.c0), c1(old.c1),
-        t0(old.t0), t1(old.t1) { }
-
-    /**
      * @brief Returns the distance t in which a ray eventually intersect the sphere. 
      *        If the ray does not intersect the sphere, it returns -1
      * 

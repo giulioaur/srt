@@ -12,6 +12,7 @@
 // Other system include
 #include <cmath>
 
+// #todelete
 #include <iostream>
 
 using namespace srt;
@@ -25,14 +26,8 @@ namespace materials{
      * 
      * @param refractivity - The refractivity index.
      */
-    Dielectric::Dielectric(const float refractivity) : refractivity(refractivity) { }
-
-    /**
-     * @brief Creates a new dieletric material with the same refractivity of a given one
-     * 
-     * @param old - The dieletric material to copy.
-     */
-    Dielectric::Dielectric(const Dielectric &old) : refractivity(old.refractivity) { }
+    Dielectric::Dielectric(const float refractivity, const Vec3 &attenuation) : 
+        refractivity(refractivity), attenuation(attenuation) { }
 
     float Dielectric::schlick(const float cos, const float refractivity) const{
         float r0 = (1 - refractivity) / (1 + refractivity);
@@ -72,13 +67,13 @@ namespace materials{
 
     bool Dielectric::scatter(Ray &ray, Vec3 &attenuation, const Vec3 &hitPoint, const Vec3 &normal, const Vec3 &textureCoords) const{
         Vec3 reflected = this->reflect(ray.getDirection(), normal),
-             outNormal = normal,
+             outNormal = -normal,
              refracted;
         float dot = ray.getDirection() * normal,
               refractivity = this->refractivity,
-              cosine = this->refractivity * (dot) / ray.getDirection().length();
+              cosine = this->refractivity * dot / ray.getDirection().length();
 
-        attenuation = {1, 1, 1};
+        attenuation = this->attenuation;
         
         // Check if the ray come from inside.
         if(dot <= 0){
@@ -88,12 +83,12 @@ namespace materials{
         }
 
         if(this->refract(ray.getDirection(), outNormal, refractivity, refracted)){
-            if(drand48() < this->schlick(cosine, refractivity)){
+            if(drand48() >= this->schlick(cosine, refractivity)){
                 ray = {hitPoint, refracted};
                 return true;
             }
         }
-
+        
         ray = {hitPoint, reflected};
         return true;
     }

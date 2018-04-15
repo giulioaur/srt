@@ -21,13 +21,6 @@ namespace lights{
     DiffuseLight::DiffuseLight(const std::shared_ptr<textures::Texture> &albedo) : albedo(albedo) { }
 
     /**
-     * @brief Constructs a new Diffuse Light object with the same texture as the passed one.
-     * 
-     * @param old - The light to duplicate.
-     */
-    DiffuseLight::DiffuseLight(const DiffuseLight &old) : albedo(old.albedo) { }
-
-    /**
      * @brief Returns the quantity of light refracted by the lambertian.
      * 
      * @return const float& - The quantity of light refracted by the lambertian.

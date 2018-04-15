@@ -28,13 +28,6 @@ namespace materials{
         fuziness(fuziness >= 0 ? fuziness <= 1 ? fuziness : 1 : 0 ) { }
 
     /**
-     * @brief Creates a new metal material equal to a given one.
-     * 
-     * @param old - The metal material to copy.
-     */
-    Metal::Metal(const Metal &old) : albedo(old.albedo), fuziness(old.fuziness) { }
-
-    /**
      * @brief Returns a vector reflected by given normal.
      * 
      * @param vec - The vector to reflect.

@@ -26,13 +26,6 @@ namespace textures{
     StaticTexture::StaticTexture(const geometry::Vec3 &color) : color(color) {} 
 
     /**
-     * @brief Constructs a new Static Texture with the same color of the passed one.
-     * 
-     * @param old - The texture from which copy the color.
-     */
-    StaticTexture::StaticTexture(const StaticTexture &old) : color(old.color) {}
-
-    /**
      * @brief Return an RGB value that represents the color of the texture (it is always the same).
      * 
      * @param u - The x texture coord. Ranged from 0 to 1.

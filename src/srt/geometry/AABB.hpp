@@ -33,7 +33,6 @@ public:
 
     AABB();
     AABB(const Vec3 &min, const Vec3 &max);
-    AABB(const AABB &old);
 
     // METHODS
 

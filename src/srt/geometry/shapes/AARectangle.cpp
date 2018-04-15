@@ -30,15 +30,6 @@ namespace shapes{
     AARectangle::AARectangle(const AARectangle::Type type, const float a0_0, const float a0_1, const float a1_0, const float a1_1, 
         const float k, const std::shared_ptr<materials::Material> material, bool flipNormal) :
         type(type), axis0_0(a0_0), axis0_1(a0_1), axis1_0(a1_0), axis1_1(a1_1), k(k), material(material), isNormalFlipped(flipNormal){ }
-    
-    
-    /**
-     * @brief Construct a new AARectangle object equal to an old one.
-     * 
-     * @param old - The rectangle to copy.
-     */
-    AARectangle::AARectangle(const AARectangle &old) : type(old.type), axis0_0(old.axis0_0), axis0_1(old.axis0_1), axis1_0(old.axis1_0), 
-        axis1_1(old.axis1_1), k(old.k), material(old.material), isNormalFlipped(old.isNormalFlipped){ }
 
     /**
      * @brief Return the normal of the rectangle.
