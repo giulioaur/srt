@@ -64,25 +64,20 @@ Scene random_scene(const float width, const float height){
     return scene;
 }
 
-Scene my_random_scene(const float width, const float height, const size_t n){
+Scene my_random_scene(const float width, const float height, const size_t n, const float f = 0.1){
     Scene scene{width, height, "my_random_scene"};
-    float radius = 7;
-    short start = -600 + radius;
-    float step = (1200 - 2 * radius) / n;
+    uint16_t length = 1250, side = sqrt(n);
+    float radius = length / (side * 2), dradius = radius * 2;
+    float angularFrequency = 2 * M_PI * f;
     vector<shared_ptr<Hitable>> objects;
-    objects.reserve(n+1);
-    // Floor
-    objects.push_back(make_shared<AARectangle>(AARectangle::XZ, -700, 700, 0, 2000, 0, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{0.4, 0.2, 0.1}))));
-    // objects.push_back(make_shared<AARectangle>(AARectangle::XZ, -600, 600, 0, 1500, 0, make_shared<Lambertian>(make_shared<CheckerTexture>())));
+    objects.reserve(side * side);
 
-    for(size_t i = 0; i < n; ++i){
-        shared_ptr<Material> material;
+    for(size_t i = 0; i < side * side; ++i){
         // Choose an x to be sure the circles are not intersected.
-        float x = start + i * step + drand48() * (step - radius);
-
-        material = make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}));
-
-        objects.push_back(make_shared<Sphere>(Vec3{x, radius, drand48() * 1800}, radius, material));
+        float x = i / side, z = i % side;
+        Vec3 pos{x * dradius, sin( x * angularFrequency) * radius, z * dradius};
+        shared_ptr<Material> material = make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{1.f - (x / side), 0, 0 + (z / side)}));
+        objects.push_back(make_shared<Sphere>(pos, radius, material));
     }
 
     // End scene.
@@ -110,6 +105,9 @@ Scene BVH_scene(const float width, const float height){
     objects.push_back(make_shared<Sphere>(Vec3{-200, 200, 100}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
     objects.push_back(make_shared<Sphere>(Vec3{150, -30, 50}, 40, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
     objects.push_back(make_shared<Sphere>(Vec3{-180, -15, 250}, 70, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{-30, -150, 50}, 20, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{-180, -15, 550}, 105, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{80, 15, 50}, 40, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
 
     BVH tempTree{objects, 0, 1};
     vector<shared_ptr<Hitable>> bvhSquares = tempTree.draw();

@@ -14,14 +14,11 @@
 #include <queue> 
 
 // My includes.
-#include "geometry/Plane.hpp"
-#include "geometry/shapes/Circle.hpp"
 #include "geometry/shapes/Sphere.hpp"
 
 using namespace std;
 using namespace srt::geometry;
 using namespace srt::geometry::shapes;
-using namespace srt::illumination::lights;
 
 const float DISTANCE_TRESHOLD = 10e-2;
 
@@ -66,6 +63,15 @@ namespace srt{
      */
     const string& Scene::getName() const{
         return this->name;
+    }
+
+    /**
+     * @brief Returns the depth of the hierarchy.
+     * 
+     * @return const size_t& - The depth of the hierarchy.
+     */
+    const size_t& Scene::getHierarchyDepth() const{
+        return this->hitablesTree.getDepth(); 
     }
 
     /**

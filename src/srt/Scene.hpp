@@ -19,7 +19,6 @@
 #include "Ray.hpp"
 #include "Hitable.hpp"
 #include "ds/BVH.hpp"
-#include "illumination/lights/Light.hpp"
 
 namespace srt{
 
@@ -44,6 +43,7 @@ public:
     const float& getHeight() const;
     const float& getWidth() const;
     const std::string& getName() const;
+    const size_t &getHierarchyDepth() const;
     void buildBVH();
     void addHitables(const std::vector<std::shared_ptr<Hitable>> &newHitables);
     const Hitable::hit_record intersection(const Ray &ray, const float tmin, const float tmax) const;

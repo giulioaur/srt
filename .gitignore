@@ -38,6 +38,8 @@ src/srt/paths.h
 example/parse_scene_old.hpp
 example/test.cpp
 example/test
+example/test.s
+example/Stopwatch.s
 
 files/test.ppm
 files/random.ppm
@@ -54,13 +56,11 @@ build_debug/
 
 docs/latex/
 
-# Shape not ready yet
-src/srt/geometry/shapes/Circle.cpp
-src/srt/geometry/shapes/Circle.hpp
-src/srt/geometry/shapes/Rectangle.cpp
-src/srt/geometry/shapes/Rectangle.hpp
+# Old cpp file
 src/srt/geometry/Vec3.cpp
+src/srt/geometry/Vec3.1.hpp
 src/srt/geometry/Mat3.cpp
+src/srt/Ray.cpp
 
 # Light
 src/srt/illumination

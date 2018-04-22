@@ -12,7 +12,6 @@
 
 // My includes.
 #include "../../Hitable.hpp"
-#include "../Plane.hpp"
 #include "../../materials/Material.hpp"
 
 namespace srt{

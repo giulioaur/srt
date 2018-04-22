@@ -18,17 +18,16 @@ using namespace std;
 using namespace srt;
 using namespace srt::geometry;
 using namespace srt::geometry::shapes;
-using namespace srt::illumination::lights;
 using namespace srt::utility;
 
 
 /**************************************** DEFINE ****************************************/
-
 #define RANDOM_SCENE 0
 #define CORNELL_SCENE 1
 #define MY_RANDOM_SCENE 2
 #define BVH_SCENE 3
-#define TARGET_SCENE BVH_SCENE
+
+#define TARGET_SCENE MY_RANDOM_SCENE
 
 #define SAMPLES 100
 #define MAX_DEPTH 50
@@ -91,7 +90,7 @@ int main(int argc, char **argv){
         cout << "...Ending scene rendering in " << sw1.end() << "sec..." << endl;
     // }
 
-    cout << "...Ending raytracer in " << sw.end() << "sec" << endl;
+    return 0;
 }
 
 
@@ -101,8 +100,8 @@ Vec3 color(const Ray &ray, const Scene &scene){
     Ray currRay{ray};
     size_t depth = 0;
     Vec3 color = {1, 1, 1}, attenuation, emission;
-    Hitable::hit_record container = scene.intersection(currRay, 0.001, MAX_FLOAT); 
-    
+    Hitable::hit_record container = scene.intersection(currRay, 0.001, MAX_FLOAT);
+
     // Compute the attenuation factor of the bouncing ray.
     while(container.hit){
         auto material = container.object->getMaterial();
@@ -140,7 +139,7 @@ pixel_vector raytracing(Scene &scene, const Vec3 &origin){
     Vec3 lookFrom{278, 278, -800}, lookAt{278, 278, 0};
     #elif TARGET_SCENE == MY_RANDOM_SCENE
     // My random scene camera.
-    Vec3 lookFrom{0, 650, -850}, lookAt{0, 250, 0};
+    Vec3 lookFrom{560, 850, -1050}, lookAt{560, 250, 0};
     #elif TARGET_SCENE == BVH_SCENE
     // My random scene camera.
     Vec3 lookFrom{0, 150, -600}, lookAt{0, 100, 0};

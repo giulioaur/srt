@@ -1,8 +1,6 @@
 #include "json.hpp"
 #include "../src/srt/Scene.hpp" 
-#include "../src/srt/geometry/shapes/Circle.hpp"
 #include "../src/srt/geometry/shapes/Sphere.hpp"
-#include "../src/srt/geometry/shapes/Rectangle.hpp"
 #include "../src/srt/textures/StaticTexture.hpp"
 #include "../src/srt/materials/Lambertian.hpp"
 #include "../src/srt/materials/Metal.hpp"
@@ -15,7 +13,6 @@ using json = nlohmann::json;
 using namespace srt;
 using namespace srt::geometry;
 using namespace srt::geometry::shapes;
-using namespace srt::illumination::lights;
 using namespace srt::textures;
 using namespace srt::materials;
 using namespace srt::materials::lights;

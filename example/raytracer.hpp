@@ -1,11 +1,7 @@
 #include <cmath>
-#include "../src/srt/illumination/lights/Spotlight.hpp"
-#include "../src/srt/illumination/pm/PMScene.hpp"
-#include "../src/srt/geometry/shapes/Shape.hpp"
 
 using namespace srt::geometry;
 using namespace srt::geometry::shapes;
-using namespace srt::illumination::pm;
 using namespace std;
 
 /**************************************** HEADER ****************************************/

@@ -25,6 +25,7 @@ private:
 
     std::shared_ptr<Hitable> left, right;
     geometry::AABB box;
+    size_t depth;
  
     // METHODS
     BVH(std::vector<std::shared_ptr<Hitable>> &hitables, size_t start, size_t end, const float t0, const float t1);
@@ -37,6 +38,7 @@ public:
 
     // METHODS
 
+    const size_t &getDepth() const;
     Hitable::hit_record intersection(const Ray &ray, const float tmin, const float tmax) const;
     std::unique_ptr<geometry::AABB> getAABB(const float t0, const float t1) const;
     std::vector<std::shared_ptr<Hitable>> draw() const;

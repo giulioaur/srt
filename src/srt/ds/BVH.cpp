@@ -18,6 +18,8 @@
 #include "../geometry/shapes/AABox.hpp"
 #include "../materials/Dielectric.hpp"
 
+static uint32_t maxLevel;
+
 #define MAX_LEVEL 3
 
 namespace srt{
@@ -40,7 +42,7 @@ namespace ds{
         BVH(hitables, 0, hitables.size() - 1, t0, t1){ }
 
     struct axis_comparator
-    {
+    {        
         inline bool operator() (const std::shared_ptr<Hitable>& hit0, const std::shared_ptr<Hitable>& hit1)
         {
             short axis = static_cast<short>(2.99*drand48());
@@ -63,20 +65,25 @@ namespace ds{
      * @param t1 
      */
     BVH::BVH(std::vector<std::shared_ptr<Hitable>> &hitables, size_t start, size_t end, const float t0, const float t1){
+        // Set left and right son.
         if(start == end){
-            this->left = this->right = hitables[start];
+            this->left = this->right = hitables[start]; 
+            this->depth = 0;
         }
         else if(end - start == 1){
             this->left = hitables[start];
             this->right = hitables[end];
+            this->depth = 0;
         }
         else{
             std::sort(hitables.begin() + start, hitables.begin() + end, axis_comparator());
             size_t middle = start + (end - start) / 2;
             this->left = std::make_shared<BVH>(BVH(hitables, start, middle, t0, t1));
             this->right = std::make_shared<BVH>(BVH(hitables, middle + 1, end, t0, t1));
+            this->depth = max(static_cast<BVH *>(this->left.get())->depth, static_cast<BVH *>(this->right.get())->depth) + 1;
         }
         
+        // Get boundig box and compute the current one.
         const auto &leftBox = this->left->getAABB(t0, t1),
                    &rightBox = this->right->getAABB(t0, t1);
 
@@ -84,6 +91,15 @@ namespace ds{
             throw std::invalid_argument("One of the hitable object has no bounding box");
 
         this->box = leftBox->surroundingBox(*rightBox);
+    }
+
+    /**
+     * @brief Gets the depth of the tree rooted at this.
+     * 
+     * @return const size_t& - The depth of the tree.
+     */
+    const size_t& BVH::getDepth() const{
+        return this->depth;
     }
 
     /**
