@@ -1,18 +1,21 @@
+#include "../src/srt/srt.h"
+
 #include <vector>
 #include <memory>
-#include "../src/srt/Scene.hpp"
-#include "../src/srt/geometry/shapes/Sphere.hpp"
-#include "../src/srt/geometry/shapes/MovingSphere.hpp"
-#include "../src/srt/geometry/shapes/AARectangle.hpp"
+
 #include "../src/srt/geometry/shapes/AABox.hpp"
+#include "../src/srt/geometry/shapes/AARectangle.hpp"
+#include "../src/srt/geometry/shapes/MovingSphere.hpp"
+#include "../src/srt/geometry/shapes/Sphere.hpp"
 #include "../src/srt/geometry/instances/Translation.hpp"
 #include "../src/srt/geometry/instances/Rotation.hpp"
-#include "../src/srt/textures/StaticTexture.hpp"
-#include "../src/srt/textures/CheckerTexture.hpp"
-#include "../src/srt/materials/Lambertian.hpp"
-#include "../src/srt/materials/Metal.hpp"
 #include "../src/srt/materials/Dielectric.hpp"
+#include "../src/srt/materials/Lambertian.hpp"
 #include "../src/srt/materials/lights/DiffuseLight.hpp"
+#include "../src/srt/materials/Metal.hpp"
+#include "../src/srt/textures/CheckerTexture.hpp"
+#include "../src/srt/textures/StaticTexture.hpp"
+#include "../src/srt/Scene.hpp"
 
 using namespace std;
 using namespace srt;
@@ -33,24 +36,24 @@ Scene random_scene(const float width, const float height){
 
     for (short a = -11; a < 11; a++) {
         for (short b = -11; b < 11; b++) {
-            float choose_mat = drand48();
-            Vec3 center{a+0.9*drand48(),0.2,b+0.9*drand48()};
-            if ((center-Vec3(4,0.2,0)).length() > 0.9) {
+            float choose_mat = rand_float();
+            Vec3 center{a+0.9f * rand_float(), 0.2f, b+0.9f * rand_float()};
+            if ((center-Vec3(4,0.2f,0)).length() > 0.9f) {
                 shared_ptr<Material> material;
-                if (choose_mat < 0.8) {         // Diffuse
-                    material = make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}));
+                if (choose_mat < 0.8f) {         // Diffuse
+                    material = make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{ rand_float()* rand_float(), rand_float()* rand_float(), rand_float()* rand_float()}));
                 }
-                else if (choose_mat < 0.95) {   // Metal
-                    material = make_shared<Metal>(Vec3{0.5*(1 + drand48()), 0.5*(1 + drand48()), 0.5*(1 + drand48())},  0.5*drand48());
+                else if (choose_mat < 0.95f) {   // Metal
+                    material = make_shared<Metal>(Vec3{0.5f *(1 + rand_float()), 0.5f *(1 + rand_float()), 0.5f *(1 + rand_float())},  0.5f *rand_float());
                 }
                 else {                          // Glass
                     material = make_shared<Dielectric>(1.5);
                 }
 
-                if(false && choose_mat < 0.8)
-                    spheres.push_back(make_shared<MovingSphere>(center, center.multiplication(Vec3{1, 0.5 * drand48(), 1}), 0, 1, 0.2, material));
+                if(false && choose_mat < 0.8f)
+                    spheres.push_back(make_shared<MovingSphere>(center, center.multiplication(Vec3{1, 0.5f * rand_float(), 1}), 0, 1, 0.2f, material));
                 else
-                    spheres.push_back(make_shared<Sphere>(center, 0.2, material));
+                    spheres.push_back(make_shared<Sphere>(center, 0.2f, material));
             }
         }
     }
@@ -91,23 +94,23 @@ Scene BVH_scene(const float width, const float height){
     vector<shared_ptr<Hitable>> objects;
 
     // objects.push_back(make_shared<Sphere>(Vec3{0, 200, 200}, 200, make_shared<Dielectric>(1)));
-    // objects.push_back(make_shared<Sphere>(Vec3{0, 100, 500}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    // objects.push_back(make_shared<Sphere>(Vec3{250, 100, 150}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    // objects.push_back(make_shared<Sphere>(Vec3{0, 100, 500}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    // objects.push_back(make_shared<Sphere>(Vec3{250, 100, 150}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
 
-    // objects.push_back(make_shared<AABox>(Vec3{-65, 0, 0}, Vec3{100, 165, 165}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    // objects.push_back(make_shared<AABox>(Vec3{-65, 0, 166}, Vec3{100, 215, 331}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    // objects.push_back(make_shared<AABox>(Vec3{-350, 100, 150}, Vec3{-250, 165, 305}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    // objects.push_back(make_shared<AABox>(Vec3{250, 200, 300}, Vec3{425, 295, 465}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    // objects.push_back(make_shared<AABox>(Vec3{-300, -100, 50}, Vec3{300, -50, 105}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    // objects.push_back(make_shared<AABox>(Vec3{-65, 0, 0}, Vec3{100, 165, 165}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    // objects.push_back(make_shared<AABox>(Vec3{-65, 0, 166}, Vec3{100, 215, 331}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    // objects.push_back(make_shared<AABox>(Vec3{-350, 100, 150}, Vec3{-250, 165, 305}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    // objects.push_back(make_shared<AABox>(Vec3{250, 200, 300}, Vec3{425, 295, 465}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    // objects.push_back(make_shared<AABox>(Vec3{-300, -100, 50}, Vec3{300, -50, 105}, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
     
-    objects.push_back(make_shared<Sphere>(Vec3{0, 100, 500}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    objects.push_back(make_shared<Sphere>(Vec3{200, 175, 350}, 30, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    objects.push_back(make_shared<Sphere>(Vec3{-200, 200, 100}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    objects.push_back(make_shared<Sphere>(Vec3{150, -30, 50}, 40, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    objects.push_back(make_shared<Sphere>(Vec3{-180, -15, 250}, 70, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    objects.push_back(make_shared<Sphere>(Vec3{-30, -150, 50}, 20, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    objects.push_back(make_shared<Sphere>(Vec3{-180, -15, 550}, 105, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
-    objects.push_back(make_shared<Sphere>(Vec3{80, 15, 50}, 40, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{drand48()*drand48(), drand48()*drand48(), drand48()*drand48()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{0, 100, 500}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{200, 175, 350}, 30, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{-200, 200, 100}, 50, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{150, -30, 50}, 40, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{-180, -15, 250}, 70, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{-30, -150, 50}, 20, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{-180, -15, 550}, 105, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
+    objects.push_back(make_shared<Sphere>(Vec3{80, 15, 50}, 40, make_shared<Lambertian>(make_shared<StaticTexture>(Vec3{rand_float()*rand_float(), rand_float()*rand_float(), rand_float()*rand_float()}))));
 
     BVH tempTree{objects, 0, 1};
     vector<shared_ptr<Hitable>> bvhSquares = tempTree.draw();

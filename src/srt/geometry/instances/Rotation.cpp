@@ -7,6 +7,7 @@
  *  Giulio Auriemma                                    *
  *                                                     *
  *******************************************************/
+#include "../src/srt/srt.h"
 #include "Rotation.hpp"
 
 // Other system includes.

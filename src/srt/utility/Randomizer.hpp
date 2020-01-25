@@ -11,6 +11,7 @@
 #define S_UTILITY_RANDOM_S
 
 // My includes
+#include "../src/srt/srt.h"
 #include "../geometry/Vec3.hpp"
 
 namespace srt{
@@ -46,8 +47,8 @@ public:
         // Marsiglia's formula
         float x1, x2, sos = 2;
         while(sos >= 1){
-            x1 = drand48() * 2 - 1;
-            x2 = drand48() * 2 - 1;
+            x1 = rand_float() * 2 - 1;
+            x2 = rand_float() * 2 - 1;
             sos = x1 * x1 + x2 * x2;
         }
 

@@ -7,6 +7,8 @@
  *  Giulio Auriemma                                    *
  *                                                     *
  *******************************************************/
+
+#include "../src/srt/srt.h"
 #include "Dielectric.hpp"
 
 // Other system include
@@ -83,7 +85,7 @@ namespace materials{
         }
 
         if(this->refract(ray.getDirection(), outNormal, refractivity, refracted)){
-            if(drand48() >= this->schlick(cosine, refractivity)){
+            if(rand_float() >= this->schlick(cosine, refractivity)){
                 ray = {hitPoint, refracted};
                 return true;
             }

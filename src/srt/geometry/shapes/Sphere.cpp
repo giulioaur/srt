@@ -7,6 +7,8 @@
  *  Giulio Auriemma                                    *
  *                                                     *
  *******************************************************/
+#include "../src/srt/srt.h"
+
 #include "Sphere.hpp"
 
 // System includes.

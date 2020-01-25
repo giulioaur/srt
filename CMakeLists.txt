@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(SRT)
 
+set(CMAKE_CXX_STANDARD 17)
+
 #########################DEFAULT MODE#########################
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -62,7 +64,7 @@ include_directories(libraries)
 
 #########################CONFIGURE FILES#########################
 set(CONFIGURE_DIR src/configuration_files)
-configure_file(${CONFIGURE_DIR}/paths.h.in /${CMAKE_CURRENT_SOURCE_DIR}/${MYBASE_DIR}/paths.h)
+configure_file(${CONFIGURE_DIR}/paths.h.in ${CMAKE_CURRENT_SOURCE_DIR}/${MYBASE_DIR}/paths.h)
 
 #########################THREAD OPTIONS#########################
 # if(NOT TARGET_FILE STREQUAL "basic_raytracer")

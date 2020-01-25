@@ -1,9 +1,12 @@
+#include "../src/srt/srt.h"
+
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
 #include <limits>
+
 #include "../src/srt/paths.h"
 #include "scene_builder.hpp"
 #include "../src/srt/Ray.hpp"
@@ -27,7 +30,7 @@ using namespace srt::utility;
 #define MY_RANDOM_SCENE 2
 #define BVH_SCENE 3
 
-#define TARGET_SCENE MY_RANDOM_SCENE
+#define TARGET_SCENE CORNELL_SCENE
 
 #define SAMPLES 100
 #define MAX_DEPTH 50
@@ -158,7 +161,7 @@ pixel_vector raytracing(Scene &scene, const Vec3 &origin){
             Vec3 finalColor; 
             // Anti aliasing.
             for(size_t k = 0; k < SAMPLES; ++k){
-                float u = ((float)i + drand48()) / width, v = ((float)j + drand48()) / height;
+                float u = ((float)i + rand_float()) / width, v = ((float)j + rand_float()) / height;
 
                 finalColor += color(cam.get_ray(u, v), scene);
             }

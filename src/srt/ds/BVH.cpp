@@ -7,6 +7,7 @@
  *  Giulio Auriemma                                    *
  *                                                     *
  *******************************************************/
+#include "../src/srt/srt.h"
 #include "BVH.hpp"
 
 // Other system includes
@@ -45,7 +46,7 @@ namespace ds{
     {        
         inline bool operator() (const std::shared_ptr<Hitable>& hit0, const std::shared_ptr<Hitable>& hit1)
         {
-            short axis = static_cast<short>(2.99*drand48());
+            short axis = static_cast<short>(2.99* rand_float());
             auto box0 = hit0->getAABB(0, 0), box1 = hit0->getAABB(0, 0);
 
             if(box0 == nullptr || box1 == nullptr)

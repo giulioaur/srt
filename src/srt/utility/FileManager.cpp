@@ -10,10 +10,11 @@
 #include "FileManager.hpp"
 
 // System includes.
-#include <dirent.h>
+#include <filesystem>
 #include <fstream>
 
 using namespace std;
+using namespace std::filesystem;
 
 namespace srt {
 	namespace utility {
@@ -25,16 +26,10 @@ namespace srt {
 		 */
 		vector<string> FileManager::getFiles(const std::string &dir){
 			vector<string> files;
-			DIR *dirp;
-			struct dirent *directory;
-
-			dirp = opendir(dir.c_str());
-			if (dirp){
-				while ((directory = readdir(dirp)) != NULL)
-					if(directory->d_type  == DT_REG && directory->d_name[0] != '.') // Exclude hidden file.
-						files.push_back(directory->d_name);
-				
-				closedir(dirp);
+			
+			for (const auto& entry : directory_iterator(dir))
+			{
+				files.push_back(entry.path().filename().string());
 			}
 
 			return files;

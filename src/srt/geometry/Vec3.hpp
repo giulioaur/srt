@@ -10,7 +10,11 @@
 #ifndef S_GEOMETRY_VEC3_S
 #define S_GEOMETRY_VEC3_S
 
+#ifdef _WIN32
+#define VM_INLINE inline
+#elif
 #define VM_INLINE __attribute__((always_inline))
+#endif
 
 // System includes
 #include <array>
