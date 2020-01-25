@@ -2,18 +2,34 @@
  *                                                     *
  *  srt: Basic Ray Tracer                              *
  *                                                     *
- *  GLOBAL INCLUDE                                     *
+ *  STOPWATCH CLASS HEADER                             *
  *                                                     *
  *  Giulio Auriemma                                    *
  *                                                     *
  *******************************************************/
-#include "srt.h"
+#pragma once
 
-float rand_float()
+// System library includes.
+#include <chrono>
+
+namespace srt::utility 
 {
-#ifdef _WIN32
-    return rand() / (RAND_MAX + 1.0);
-#elif
-    return drand48()
-#endif
-}
+
+/*
+ * It is just a stopwatch to keep time for performance's purposes.
+ */ 
+class Stopwatch
+{
+public:
+
+	Stopwatch();
+	void start();
+	double end() const;
+	long endms() const;
+
+private:
+
+	std::chrono::high_resolution_clock::time_point timeStart;
+};
+
+} 

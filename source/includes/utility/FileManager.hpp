@@ -2,17 +2,27 @@
  *                                                     *
  *  srt: Basic Ray Tracer                              *
  *                                                     *
- *  GLOBAL INCLUDE                                     *
+ *  FILE MANAGER CLASS HEADER                          *
  *                                                     *
  *  Giulio Auriemma                                    *
  *                                                     *
  *******************************************************/
 #pragma once
 
-#include <cstdlib>
+// System libraries includes.
+#include <string>
+#include <vector>
 
-#ifdef _WIN32
-#define M_PI 3.1415926535897
-#endif
+namespace srt::utility
+{
 
-float rand_float();
+class FileManager 
+{
+
+public:
+
+	static std::vector<std::string> getFilesList(const std::string &dir);
+	static void writeFile(const std::string &filename, const std::string &content, const bool append = true);
+};
+
+}

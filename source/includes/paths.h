@@ -1,15 +1,21 @@
 /*******************************************************
  *                                                     *
- *  srt: Sushi RayTracer                               *
+ *  srt: Basic Ray Tracer                              *
  *                                                     *
- *  HITABLE CLASS FILE                                 *
+ *  PATHS                                              *
  *                                                     *
  *  Giulio Auriemma                                    *
  *                                                     *
  *******************************************************/
-#include "Hitable.hpp"
+#ifndef S_PATHS_S
+#define S_PATHS_S
+
+#include <string>
 
 namespace srt{
-    const Hitable::hit_record Hitable::NO_HIT = {false, -1, nullptr, {}, {}};
-    const std::shared_ptr<materials::Material> Hitable::NO_MATERIAL = { };
+    const std::string BASE_DIR = "D:/Documents/CrossProject/srt/"; // The base directory.
+    const std::string FILES_DIR = BASE_DIR + "files/"; // The files directory
 }
+
+
+#endif
