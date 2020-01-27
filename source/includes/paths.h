@@ -7,15 +7,11 @@
  *  Giulio Auriemma                                    *
  *                                                     *
  *******************************************************/
-#ifndef S_PATHS_S
-#define S_PATHS_S
+#pragma once
 
 #include <string>
 
 namespace srt{
-    const std::string BASE_DIR = "D:/Documents/CrossProject/srt/"; // The base directory.
+    const std::string BASE_DIR = "D:/Math/srt/"; // The base directory.
     const std::string FILES_DIR = BASE_DIR + "files/"; // The files directory
 }
-
-
-#endif

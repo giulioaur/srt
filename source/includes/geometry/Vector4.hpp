@@ -23,9 +23,7 @@ namespace srt::geometry
 //										SIMD IMPLEMENTATION										 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-template <>
-class Vector4 <float>
+class Vector4
 {
 public:
 
@@ -272,6 +270,7 @@ public:
 
 	float length() const;
 	float squaredMagnitude() const;
+	Vector4 normalize() const;
 	Vector4 mul(const Vector4& rhs) const;	// Element-wise multiplication.
 	float dot(const Vector4& rhs) const;			// Dot product.
 
@@ -297,8 +296,9 @@ public:
 
 	Vector4 operator+(const Vector4& rhs) const;	
 	Vector4 operator-(const Vector4& rhs) const;
-	Vector4 operator*(const float rhs) const;			// Scalar product.
+	Vector4 operator*(const float rhs) const;				// Scalar product.
 	float operator*(const Vector4& rhs) const;				// Dot product.
+	Vector4 operator/(const float rhs) const;				// Scalar division.
 
 private:
 
@@ -386,6 +386,12 @@ INLINE float Vector4::squaredMagnitude() const
 		   m_data.elems.y * m_data.elems.y +
 		   m_data.elems.z * m_data.elems.z +
 		   m_data.elems.w * m_data.elems.w;
+}
+
+
+INLINE Vector4 Vector4::normalize() const
+{
+	return *this / (m_data.elems.x + m_data.elems.y + m_data.elems.z);
 }
 
 
@@ -495,6 +501,15 @@ INLINE float Vector4::operator*(const Vector4& rhs) const
 }
 
 
+INLINE Vector4 Vector4::operator/(const float rhs) const
+{
+	return Vector4{
+		m_data.elems.x / rhs,
+		m_data.elems.y / rhs,
+		m_data.elems.z / rhs,
+		m_data.elems.w / rhs,
+	};
+}
 
 
 
