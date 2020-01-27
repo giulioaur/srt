@@ -10,6 +10,8 @@
 #define INLINE inline
 #endif // _WIN32
 
+#define M_PI 3.1415926535897
+
 
 /*********************** TYPES ***********************/
 

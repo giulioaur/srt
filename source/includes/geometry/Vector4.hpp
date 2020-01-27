@@ -292,6 +292,9 @@ public:
 	Vector4& operator=(const Vector4& rhs);
 	Vector4& operator=(Vector4&& rhs);
 
+	bool operator==(const Vector4& rhs) const;
+	bool operator!=(const Vector4& rhs) const;
+
 	Vector4 operator-() const;
 
 	Vector4 operator+(const Vector4& rhs) const;	
@@ -319,6 +322,11 @@ private:
 	friend class Matrix4;
 
 public:
+
+	friend Vector4 operator* (const float lhs, const Vector4 rhs)
+	{
+		return rhs * lhs;
+	}
 
 	friend void swap(Vector4& a, Vector4& b)
 	{
@@ -448,6 +456,19 @@ INLINE Vector4& Vector4::operator=(Vector4&& rhs)
 {
 	srt::swap(*this, rhs);
 	return *this;
+}
+
+INLINE bool Vector4::operator==(const Vector4& rhs) const
+{
+	return m_data.elems.x == rhs.m_data.elems.x &&
+		   m_data.elems.y == rhs.m_data.elems.y &&
+		   m_data.elems.z == rhs.m_data.elems.z &&
+		   m_data.elems.w == rhs.m_data.elems.w;
+}
+
+INLINE bool Vector4::operator!=(const Vector4& rhs) const
+{
+	return !(*this == rhs);
 }
 
 

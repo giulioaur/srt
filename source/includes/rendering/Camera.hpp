@@ -49,12 +49,12 @@ public:
 
 private: 
 
-	const geometry::Vector4 origin;
-	const geometry::Vector4 lower_left_corner;
-	const geometry::Vector4 horizontal;
-	const geometry::Vector4 vertical;
-	const geometry::Vector4 u; 
-	const geometry::Vector4 v;
+	geometry::Vector4 origin;
+	geometry::Vector4 lower_left_corner;
+	geometry::Vector4 horizontal;
+	geometry::Vector4 vertical;
+	geometry::Vector4 u; 
+	geometry::Vector4 v;
 	float aperture;
 	float t0;
 	float t1;
