@@ -9,8 +9,24 @@
 namespace srt
 {
 
-rendering::Color compute_color(const geometry::Ray& ray, const ds::Scene& scene)
+using s_hit_record = geometry::hitables::Hitable::s_hit_record;
+
+rendering::Color compute_color(const geometry::Ray& ray, const ds::Scene& scene,
+	const s_rt_parameter& parameters)
 {
+	int32_t depth = 0;
+	s_hit_record hit_record;
+	
+	if (scene.intersection(ray, 0.0001f, FLOAT_MAX, hit_record))
+	{
+		geometry::Vector4 target = hit_record.point + hit_record.normal +
+			utility::Randomizer::randomInUnitSphere();
+		return 0.5f * compute_color(geometry::Ray{ hit_record.point, target - hit_record.point }, scene, parameters);
+	}
+
+	float t = 0.5f * (ray.getDirection().normalize().y() + 1);
+	return (1.f - t) * rendering::Color(1.f, 1.f, 1.f) + t * rendering::Color(0.5f, 0.7f, 1.f);
+
 	return rendering::Color();
 }
 
@@ -20,8 +36,8 @@ pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,
 	using random = utility::Randomizer;
 
 	pixel_vector pixels;
-	const float height = scene.getHeight();
-	const float width = scene.getWidth();
+	const int32_t height = scene.getHeight();
+	const int32_t width = scene.getWidth();
 
 	pixels.resize(height * width);
 
@@ -34,17 +50,17 @@ pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,
 				float u = ((float)i + random::randomFloat()) / width;
 				float v = ((float)j + random::randomFloat()) / height;
 
-				finalColor += compute_color(camera.getRay(u, v), scene);
+				finalColor += compute_color(camera.getRay(u, v), scene, parameters);
 			}
 
 			finalColor /= parameters.antialiasing_samples;
 
+			// #TODO_OPTIMIZATION Use a simple gamma correction.
 			pixels[(height - j) * width + i] = rendering::Color(
 				sqrt(finalColor.x()) * 255.99f,
 				sqrt(finalColor.y()) * 255.99f,
 				sqrt(finalColor.z()) * 255.99f
 			);
-			// pixels.push_back(finalColor.x()); pixels.push_back(finalColor.y()); pixels.push_back(finalColor.z());
 		}
 	}
 

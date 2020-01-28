@@ -19,9 +19,7 @@ namespace srt::utility
  */
 class Randomizer
 {
-
 public:
-    // METHODS
 
     /**
      * @brief Returns a random number in a given interval.
@@ -37,13 +35,12 @@ public:
      */
     static float randomFloat();
 
-
     /**
      * @brief Returns a random point in the unit sphere.
      * 
      * @return Vec3 - A random point in unit sphere.
      */
-    static inline geometry::Vector4 randomInUnitSphere();
+    static geometry::Vector4 randomInUnitSphere();
 };
 
 }

@@ -30,7 +30,8 @@ public:
     float getRadius() const { return radius; };
     const Vector4& getCenter() const { return center; };
     virtual Vector4 getNormal(const Vector4& pos) const;
-    virtual Hitable::s_hit_record intersection(const Ray& ray, const float tmin, const float tmax) const;
+    virtual bool intersection(const Ray& ray, const float tmin, const float tmax,
+        Hitable::s_hit_record& hit_record) const;
     //virtual const std::shared_ptr<materials::Material>& getMaterial() const;
     //virtual std::unique_ptr<AABB> getAABB(const float t0, const float t1) const;
     //virtual Vector4 getTextureCoords(const Vector4& p) const;

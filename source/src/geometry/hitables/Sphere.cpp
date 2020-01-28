@@ -21,7 +21,9 @@ bool Sphere::operator != (const Hitable& hitable) const {
     return false;
 }
 
-Hitable::s_hit_record Sphere::intersection(const Ray& ray, const float tmin, const float tmax) const {
+bool Sphere::intersection(const Ray& ray, const float tmin, const float tmax,
+    Hitable::s_hit_record& hit_record) const 
+{
     const Vector4 dist = ray.getOrigin() - this->center;
     const float a = ray.getDirection().squaredMagnitude();
     const float b = 2. * (ray.getDirection() * dist);
@@ -32,14 +34,18 @@ Hitable::s_hit_record Sphere::intersection(const Ray& ray, const float tmin, con
     // If the solution is only one, use it to return the point, else return the positive one.
     // if(delta == 0)  t = -0.5 * b / a;
     if (delta > 0) {
-        const float q = b < 0 ? -0.5 * (b - sqrt(delta)) : -0.5 * (b + sqrt(delta));
+        const float q = b < 0 ? -0.5f * (b - sqrt(delta)) : -0.5f * (b + sqrt(delta));
         const float t0 = q / a, t1 = c / q;
         if (t0 > 0 && t1 > 0)        t = std::min(t0, t1);
         else                         t = std::max(t0, t1);
     }
 
-    if (t >= tmin && t <= tmax)  return { true, t, this, ray.getPoint(t), this->getNormal(ray.getPoint(t)) };
-    return Hitable::NO_HIT;
+    if (t >= tmin && t <= tmax)
+    {
+        hit_record = { true, t, this, ray.getPoint(t), this->getNormal(ray.getPoint(t)) };
+        return true;
+    }
+    return false;
 }
 
 /**

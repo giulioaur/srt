@@ -1,6 +1,10 @@
 #pragma once
 
+#include "geometry/hitables/Hitable.hpp"
+
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace srt::ds
 {
@@ -11,28 +15,29 @@ public:
 
 	// CONSTRUCTORS
 
-	Scene(const float width, const float height, const std::string &name,
+	Scene(const int32_t width, const int32_t height, const std::string &name,
 		const float t0 = 0, const float t1 = 1);
 
 	// METHODS
 
-	const float& getHeight() const { return height; };
-	const float& getWidth() const { return width; };
-	const std::string& getName() const { return name; }
+	const int32_t& getHeight() const	{ return m_height; };
+	const int32_t& getWidth() const		{ return m_width; };
+	const std::string& getName() const	{ return m_name; }
 	//const size_t &getHierarchyDepth() const;
 	//void buildBVH();
-	//void addHitables(const std::vector<std::shared_ptr<Hitable>> &newHitables);
-	//const Hitable::hit_record intersection(const Ray &ray, const float tmin, const float tmax) const;
+	void addHitables(const std::vector<std::shared_ptr<geometry::hitables::Hitable>> &newHitables);
+	const bool intersection(const geometry::Ray& ray, const float tmin, const float tmax,
+		geometry::hitables::Hitable::s_hit_record& hit_record) const;
 
 private:
 
-	const std::string name;
-	const float height;
-	const float width;
-	const float t0;
-	const float t1;
+	const std::string m_name;
+	const int32_t m_height;
+	const int32_t m_width;
+	const float m_t0;
+	const float m_t1;
 	//ds::BVH hitablesTree;
-	//std::vector<std::shared_ptr<Hitable>> hitables = {};
+	std::vector<std::shared_ptr<geometry::hitables::Hitable>> m_hitables;
 };
 
 }

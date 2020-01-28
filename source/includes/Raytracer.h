@@ -17,6 +17,7 @@ namespace srt
 typedef struct rtp
 {
 	int16_t antialiasing_samples;
+	int16_t max_bounces;
 } s_rt_parameter;
 
 

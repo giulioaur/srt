@@ -254,8 +254,8 @@ public:
 	Vector4(const float val);
 	Vector4(const float x, const float y, const float z, const float w);
 	Vector4(const float arr[4]);
-	Vector4(const Vector4& other);
-	Vector4(Vector4&& other);
+	Vector4(const Vector4& other) noexcept;
+	Vector4(Vector4&& other) noexcept;
 
 	/*********************** GETTER ***********************/
 
@@ -293,8 +293,8 @@ public:
 	float operator[](const umsize index);
 	const float operator[](const umsize index) const;
 
-	Vector4& operator=(const Vector4& rhs);
-	Vector4& operator=(Vector4&& rhs);
+	Vector4& operator=(const Vector4& rhs) noexcept;
+	Vector4& operator=(Vector4&& rhs) noexcept;
 
 	bool operator==(const Vector4& rhs) const;
 	bool operator!=(const Vector4& rhs) const;
@@ -376,13 +376,13 @@ INLINE Vector4::Vector4(const float arr[4])
 }
 
 
-INLINE Vector4::Vector4(const Vector4& other)
+INLINE Vector4::Vector4(const Vector4& other) noexcept
 	: Vector4(other.m_data.raw)
 {
 }
 
 
-INLINE Vector4::Vector4(Vector4&& other)
+INLINE Vector4::Vector4(Vector4&& other) noexcept
 {
 	srt::swap(*this, other);
 }
@@ -457,7 +457,7 @@ INLINE const float Vector4::operator[](const umsize index) const
 }
 
 
-INLINE Vector4& Vector4::operator=(const Vector4& rhs)
+INLINE Vector4& Vector4::operator=(const Vector4& rhs) noexcept
 {
 	Vector4 tmp(rhs);
 	srt::swap(*this, tmp);
@@ -465,7 +465,7 @@ INLINE Vector4& Vector4::operator=(const Vector4& rhs)
 }
 
 
-INLINE Vector4& Vector4::operator=(Vector4&& rhs)
+INLINE Vector4& Vector4::operator=(Vector4&& rhs) noexcept
 {
 	srt::swap(*this, rhs);
 	return *this;

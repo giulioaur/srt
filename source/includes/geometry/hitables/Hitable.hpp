@@ -20,12 +20,24 @@ public:
 	typedef struct hr {
 		bool hit;
 		float t;
-		const Hitable* const object;
-		const Vector4 point;
-		const Vector4 normal;
+		const Hitable* object;
+		Vector4 point;
+		Vector4 normal;
+
+		hr() : hit(false), t(-1), object(nullptr), point(), normal() { };
 
 		hr(bool h, float t, Hitable const *obj, const Vector4& point, const Vector4& normal) :
 			hit(h), t(t), object(obj), point(point), normal(normal) {}
+
+		struct hr& operator=(struct hr&& rhs)
+		{
+			hit = rhs.hit;
+			t = rhs.t;
+			object = rhs.object;
+			point = std::move(rhs.point);
+			normal = std::move(rhs.normal);
+			return *this;
+		}
 	} s_hit_record;
 
 	// The record for no hit situation.
@@ -42,7 +54,8 @@ public:
 	 * @param tmax - The max t to consider.
 	 * @return Hitable::s_hit_record - The record that stores hit info.
 	 */
-	virtual Hitable::s_hit_record intersection(const Ray &ray, const float tmin, const float tmax) const = 0;
+	virtual bool intersection(const Ray &ray, const float tmin, const float tmax, 
+		s_hit_record& hit_record) const = 0;
 
 	///**
 	//	* @brief Get the Material of the object.

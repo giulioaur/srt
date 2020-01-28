@@ -2,6 +2,8 @@
 
 #include "paths.h"
 
+#include <limits>
+
 /*********************** DEFINE ***********************/
 
 #ifdef _WIN32
@@ -11,6 +13,8 @@
 #endif // _WIN32
 
 #define M_PI 3.1415926535897
+
+#define FLOAT_MAX std::numeric_limits<float>::max()
 
 
 /*********************** TYPES ***********************/
