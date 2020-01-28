@@ -10,6 +10,8 @@
 #include "srt.h"
 
 #include <cmath>
+#include <sstream>
+#include <string>
 
 namespace srt::geometry
 {
@@ -257,10 +259,10 @@ public:
 
 	/*********************** GETTER ***********************/
 
-	float x() { return m_data.elems.x; }
-	float y() { return m_data.elems.y; }
-	float z() { return m_data.elems.z; }
-	float w() { return m_data.elems.w; }
+	float& x() { return m_data.elems.x; }
+	float& y() { return m_data.elems.y; }
+	float& z() { return m_data.elems.z; }
+	float& w() { return m_data.elems.w; }
 	const float x() const { return m_data.elems.x; }
 	const float y() const { return m_data.elems.y; }
 	const float z() const { return m_data.elems.z; }
@@ -284,6 +286,8 @@ public:
 	 */
 	Vector4 cross(const Vector4& rhs) const;		
 
+	std::string toString() const;
+
 	/*********************** OPERATORS ***********************/
 
 	float operator[](const umsize index);
@@ -300,8 +304,10 @@ public:
 	Vector4 operator+(const Vector4& rhs) const;	
 	Vector4 operator-(const Vector4& rhs) const;
 	Vector4 operator*(const float rhs) const;				// Scalar product.
+	Vector4 operator*=(const float rhs);					// Scalar product.
 	float operator*(const Vector4& rhs) const;				// Dot product.
 	Vector4 operator/(const float rhs) const;				// Scalar division.
+	Vector4 operator/=(const float rhs);					// Scalar division.
 
 private:
 
@@ -431,6 +437,13 @@ INLINE Vector4 Vector4::cross(const Vector4& rhs) const
 	};
 }
 
+INLINE std::string Vector4::toString() const
+{
+	std::ostringstream stringStream;
+	stringStream << x() << ", " << y() << ", " << z();
+	return stringStream.str();
+}
+
 
 INLINE float Vector4::operator[](const umsize index)
 {
@@ -515,6 +528,12 @@ INLINE Vector4 Vector4::operator*(const float rhs) const
 	};
 }
 
+INLINE Vector4 Vector4::operator*=(const float rhs)
+{
+	*this = *this * rhs;
+	return *this;
+}
+
 
 INLINE float Vector4::operator*(const Vector4& rhs) const
 {
@@ -530,6 +549,12 @@ INLINE Vector4 Vector4::operator/(const float rhs) const
 		m_data.elems.z / rhs,
 		m_data.elems.w / rhs,
 	};
+}
+
+INLINE Vector4 Vector4::operator/=(const float rhs)
+{
+	*this = *this / rhs;
+	return *this;
 }
 
 

@@ -35,4 +35,14 @@ INLINE void swap(T& a, T& b)
     swap(a, b);
 }
 
+template <class ITERATOR, class FUNCTOR >
+INLINE void map(ITERATOR start, ITERATOR end, const FUNCTOR& func)
+{
+	while (start < end)
+	{
+		func(*start);
+		++start;
+	}
+}
+
 }

@@ -35,7 +35,7 @@ public:
 	 * @param t - The vertical offset.
 	 * @return Ray - The ray from the camera to the scene.
 	 */
-	geometry::Ray getRay(const float u, const float v);
+	geometry::Ray getRay(const float u, const float v) const;
 
 	/**
 	 * @brief Set the new camera time. If t0 is negative, it will not be changed.

@@ -42,7 +42,8 @@ Camera::Camera(const geometry::Vector4& lookFrom, const geometry::Vector4& lookA
  * @param t - The vertical offset.
  * @return Ray - The ray from the camera to the scene.
  */
-geometry::Ray Camera::getRay(const float s, const float t) {
+geometry::Ray Camera::getRay(const float s, const float t) const
+{
 	geometry::Vector4 start = this->aperture * utility::Randomizer::randomInUnitSphere();
 	geometry::Vector4 offset = this->u * start.x() + this->v * start.y();
 	float time = utility::Randomizer::randomRange(this->t0, this->t1);
@@ -56,8 +57,10 @@ geometry::Ray Camera::getRay(const float s, const float t) {
  * @param t0 - The start time.
  * @param t1 - The end time.
  */
-void Camera::setTime(const float t0, const float t1) {
+void Camera::setTime(const float t0, const float t1) 
+{
 	if (t0 >= 0)   this->t0 = t0;
 	if (t1 >= 1)   this->t1 = t1;
 }
+
 }
