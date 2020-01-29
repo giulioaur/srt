@@ -405,7 +405,7 @@ INLINE float Vector4::squaredMagnitude() const
 
 INLINE Vector4 Vector4::normalize() const
 {
-	return *this / (m_data.elems.x + m_data.elems.y + m_data.elems.z);
+	return *this / length();
 }
 
 

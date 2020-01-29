@@ -20,15 +20,20 @@ public:
 	 * @param dir - The direction of the ray.
 	 * @param time - The time the ray is shot.
 	 */
-	Ray(const Vector4& origin, const Vector4& direction, const float time = 1) : origin(origin),
-		direction(direction.normalize()), time(time) {}
+	Ray(const Vector4& origin, const Vector4& direction, const float time = 1) 
+		: m_origin(origin)
+		, m_direction(direction.normalize())
+		, m_time(time) {}
 
 	/**
 	 * @brief Creates a new ray equal to an old one.
 	 *
 	 * @param old - The old ray.
 	 */
-	Ray(const Ray &old) : origin(old.origin), direction(old.direction), time(old.time) {}
+	Ray(const Ray &old) 
+		: m_origin(old.m_origin)
+		, m_direction(old.m_direction)
+		, m_time(old.m_time) {}
 
 	/**
 	 * @brief Returns a copy of the vector that indicates the origin of the ray.
@@ -37,7 +42,7 @@ public:
 	 */
 	INLINE const geometry::Vector4& getOrigin() const 
 	{
-		return this->origin;
+		return this->m_origin;
 	}
 
 	/**
@@ -47,7 +52,7 @@ public:
 	 */
 	INLINE const geometry::Vector4& getDirection() const 
 	{
-		return this->direction;
+		return this->m_direction;
 	}
 
 	/**
@@ -57,7 +62,7 @@ public:
 	 */
 	INLINE float getTime() const 
 	{
-		return this->time;
+		return this->m_time;
 	}
 
 	/**
@@ -68,17 +73,15 @@ public:
 	 */
 	INLINE geometry::Vector4 getPoint(const float distance) const 
 	{
-		return this->origin + (this->direction * distance);
+		return this->m_origin + (this->m_direction * distance);
 	}
 
 
 private:
 
-	// ATTRIBUTES
-	const Vector4 origin;
-	const Vector4 direction;
-
-	float time;
+	const Vector4 m_origin;
+	const Vector4 m_direction;
+	float m_time;
 
 };
 }

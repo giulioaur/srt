@@ -26,8 +26,6 @@ rendering::Color compute_color(const geometry::Ray& ray, const ds::Scene& scene,
 
 	float t = 0.5f * (ray.getDirection().normalize().y() + 1);
 	return (1.f - t) * rendering::Color(1.f, 1.f, 1.f) + t * rendering::Color(0.5f, 0.7f, 1.f);
-
-	return rendering::Color();
 }
 
 pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,

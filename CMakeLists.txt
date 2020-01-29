@@ -34,8 +34,10 @@ set(EXAMPLE_SOURCE_FILES ${PROJECT_SOURCE_DIR}/example/cornell_box.cpp)
 add_executable(${TARGET_FILE} ${EXAMPLE_SOURCE_FILES} ${PROJECT_FILES})
 
 ######################### COMPILER OPTIONS #########################
-set (CMAKE_CXX_FLAGS_DEBUG "-g")
-set (CMAKE_CXX_FLAGS_RELEASE "-O3")
+if (UNIX)
+  set (CMAKE_CXX_FLAGS_DEBUG "-g")
+  set (CMAKE_CXX_FLAGS_RELEASE "-O3")
+endif(UNIX)
 
 ######################### ADD LIBRARIES #########################
 include_directories(libraries ${SOURCE_DIRECTORY}/includes)
@@ -54,10 +56,10 @@ configure_file(${CONFIGURE_DIR}/paths.h.in ${SOURCE_DIRECTORY}/includes/paths.h)
 
 ######################### OPENMP #########################
 find_package(OpenMP)
-if (OPENMP_CXX_FOUND)
+if (OPENMP_CXX_FOUND AND UNIX)
   set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${OpenMP_CXX_FLAGS}")
   set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-endif(OPENMP_CXX_FOUND)
+endif(OPENMP_CXX_FOUND AND UNIX)
 
 ######################### PROFILING #########################
 if(PROFILE)
