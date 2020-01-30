@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "geometry/hitables/Sphere.hpp"
+#include "rendering/Material.hpp"
 #include "utility/Stopwatch.hpp"
 
 /**************************************** DEFINE ****************************************/
@@ -27,8 +28,26 @@ int main(int argc, char** argv)
     const srt::s_rt_parameter parameters{ 100, 10 };
 
     scene.addHitables({
-        std::make_shared<srt::geometry::hitables::Sphere>(srt::geometry::Vector4{ 0.f, 0.f, -1.f, 0.f }, 0.5f),
-        std::make_shared<srt::geometry::hitables::Sphere>(srt::geometry::Vector4{ 0.f, -100.5f, -1.f, 0.f }, 100.f)
+        std::make_shared<srt::geometry::hitables::Sphere>(
+			srt::geometry::Vector4{ 0.f, 0.f, -1.f, 0.f }, 
+			0.5f, 
+			std::make_shared<srt::rendering::Diffuse>(srt::rendering::Color{ 1, 0, 0})
+		),
+        std::make_shared<srt::geometry::hitables::Sphere>(
+			srt::geometry::Vector4{ 0.f, -100.5f, -1.f, 0.f }, 
+			100.f,
+			std::make_shared<srt::rendering::Diffuse>(srt::rendering::Color{ 0.2f, 1, 0.2f})
+		),
+		std::make_shared<srt::geometry::hitables::Sphere>(
+			srt::geometry::Vector4{ 1.f, 0.f, -1.f, 0.f },
+			0.5f,
+			std::make_shared<srt::rendering::Metal>(srt::rendering::Color{ 0.8f, 0.6f, 0.2f}, 0.f)
+		),
+		std::make_shared<srt::geometry::hitables::Sphere>(
+			srt::geometry::Vector4{ -1.f, 0.f, -1.f, 0.f },
+			0.5f,
+			std::make_shared<srt::rendering::Metal>(srt::rendering::Color{ 0, 0, 1}, 0.5f)
+		)
     });
 
     srt::utility::Stopwatch sw;

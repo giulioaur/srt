@@ -5,29 +5,31 @@
 namespace srt::geometry::hitables
 {
 
-Sphere::Sphere(const Vector4& center, const float radius/*, const shared_ptr<Material> material*/) :
-    center(center), radius(radius)/*, material(material)*/ { }
+Sphere::Sphere(const Vector4& center, const float radius, const std::shared_ptr<rendering::Material> material) 
+	: m_center(center)
+	, m_radius(radius)
+	, m_material(material) { }
 
     
 bool Sphere::operator == (const Hitable& hitable) const {
     if (const Sphere* sphere = dynamic_cast<Sphere const*>(&hitable))
-        return this->center == sphere->center && this->radius == sphere->radius;
+        return m_center == sphere->m_center && m_radius == sphere->m_radius;
     return false;
 }
 
 bool Sphere::operator != (const Hitable& hitable) const {
     if (const Sphere* sphere = dynamic_cast<Sphere const*>(&hitable))
-        return this->center != sphere->center || this->radius != sphere->radius;
+        return m_center != sphere->m_center || m_radius != sphere->m_radius;
     return false;
 }
 
 bool Sphere::intersection(const Ray& ray, const float tmin, const float tmax,
     Hitable::s_hit_record& hit_record) const 
 {
-    const Vector4 dist = ray.getOrigin() - this->center;
+    const Vector4 dist = ray.getOrigin() - m_center;
     const float a = ray.getDirection().squaredMagnitude();
-    const float b = 2. * (ray.getDirection() * dist);
-    const float c = dist.squaredMagnitude() - this->radius * this->radius;
+    const float b = 2.f * (ray.getDirection() * dist);
+    const float c = dist.squaredMagnitude() - m_radius * m_radius;
     const float delta = b * b - 4 * a * c;
     float t = -1;
 
@@ -42,7 +44,7 @@ bool Sphere::intersection(const Ray& ray, const float tmin, const float tmax,
 
     if (t >= tmin && t <= tmax)
     {
-        hit_record = { true, t, this, ray.getPoint(t), this->getNormal(ray.getPoint(t)) };
+        hit_record = { true, t, this, ray.getPoint(t), this->getNormal(ray.getPoint(t)), m_material };
         return true;
     }
     return false;
@@ -55,17 +57,8 @@ bool Sphere::intersection(const Ray& ray, const float tmin, const float tmax,
     * @return srt::geometry::Vector4 getNormal - The normal to the circle at given point.
     */
 Vector4 Sphere::getNormal(const Vector4& pos) const {
-    return (pos - this->center) / this->radius;
+    return (pos - m_center) / m_radius;
 }
-
-///**
-//    * @brief Returns the material of the sphere.
-//    *
-//    * @return const Material& - The material of the spheres.
-//    */
-//const std::shared_ptr<materials::Material>& Sphere::getMaterial() const {
-//    return this->material;
-//}
 
 ///**
 //    * @brief Returns the surrounding axis aligned bounding box.
@@ -74,7 +67,7 @@ Vector4 Sphere::getNormal(const Vector4& pos) const {
 //    *                                          if it does not exist.
 //    */
 //std::unique_ptr<geometry::AABB> Sphere::getAABB(const float t0, const float t1) const {
-//    return make_unique<AABB>(this->center - Vector4{ radius }, this->center + Vector4{ radius });
+//    return make_unique<AABB>(m_center - Vector4{ radius }, m_center + Vector4{ radius });
 //}
 
 ///**

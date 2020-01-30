@@ -5,6 +5,11 @@
 #include "geometry/Ray.hpp"
 #include "geometry/Vector4.hpp"
 
+namespace srt::rendering
+{
+	class Material;
+}
+
 namespace srt::geometry::hitables 
 {
 
@@ -23,11 +28,13 @@ public:
 		const Hitable* object;
 		Vector4 point;
 		Vector4 normal;
+		std::shared_ptr<rendering::Material> material;
 
 		hr() : hit(false), t(-1), object(nullptr), point(), normal() { };
 
-		hr(bool h, float t, Hitable const *obj, const Vector4& point, const Vector4& normal) :
-			hit(h), t(t), object(obj), point(point), normal(normal) {}
+		hr(bool h, float t, Hitable const *obj, const Vector4& point, const Vector4& normal, 
+			const std::shared_ptr<rendering::Material> material) 
+			: hit(h), t(t), object(obj), point(point), normal(normal), material(material) {}
 
 		struct hr& operator=(struct hr&& rhs)
 		{
@@ -36,6 +43,7 @@ public:
 			object = rhs.object;
 			point = std::move(rhs.point);
 			normal = std::move(rhs.normal);
+			material = std::move(rhs.material);
 			return *this;
 		}
 	} s_hit_record;

@@ -35,35 +35,9 @@ public:
 		, m_direction(old.m_direction)
 		, m_time(old.m_time) {}
 
-	/**
-	 * @brief Returns a copy of the vector that indicates the origin of the ray.
-	 *
-	 * @return geometry::Vector4 - The origin of the ray.
-	 */
-	INLINE const geometry::Vector4& getOrigin() const 
-	{
-		return this->m_origin;
-	}
-
-	/**
-	 * @brief Returns a copy of the vector that indicates the direction of the ray.
-	 *
-	 * @return unique_ptr<Vector4> - The direction of the ray.
-	 */
-	INLINE const geometry::Vector4& getDirection() const 
-	{
-		return this->m_direction;
-	}
-
-	/**
-	 * @brief Returns the time on which the ray was shot.
-	 *
-	 * @return float - The time the ray was shot.
-	 */
-	INLINE float getTime() const 
-	{
-		return this->m_time;
-	}
+	const Vector4& getOrigin() const { return this->m_origin;	}
+	const Vector4& getDirection() const { return this->m_direction; }
+	float getTime() const { return this->m_time;	}
 
 	/**
 	 * @brief Gets the point of the vector at distance d.
@@ -71,17 +45,46 @@ public:
 	 * @param distance - The distance of the point from the origin.
 	 * @return geometry::Vector4 getPosition - The position of the point at distance d.
 	 */
-	INLINE geometry::Vector4 getPoint(const float distance) const 
-	{
-		return this->m_origin + (this->m_direction * distance);
-	}
+	INLINE Vector4 getPoint(const float distance) const;
 
+
+	Ray operator=(const Ray& rhs) noexcept;
+	Ray operator=(Ray&& rhs) noexcept;
 
 private:
 
-	const Vector4 m_origin;
-	const Vector4 m_direction;
+	Vector4 m_origin;
+	Vector4 m_direction;
 	float m_time;
 
+public:
+
+	friend void swap(Ray& a, Ray& b)
+	{
+		srt::swap(a.m_origin, b.m_origin);
+		srt::swap(a.m_direction, b.m_direction);
+		srt::swap(a.m_time, b.m_time);
+	}
+
 };
+
+
+INLINE Vector4 Ray::getPoint(const float distance) const
+{
+	return m_origin + (m_direction * distance);
+}
+
+INLINE Ray Ray::operator=(const Ray& rhs) noexcept
+{
+	Ray ray{ rhs };
+	srt::swap(*this, ray);
+	return *this;
+}
+
+INLINE Ray Ray::operator=(Ray&& rhs) noexcept
+{
+	srt::swap(*this, rhs);
+	return *this;
+}
+
 }

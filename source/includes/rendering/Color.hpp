@@ -44,6 +44,15 @@ public:
 		};
 	}
 
+	Color operator * (const Color& rhs) const
+	{
+		return Color{
+			x() * rhs.x(),
+			y() * rhs.y(),
+			z() * rhs.z()
+		};
+	}
+
 	friend Color operator* (const float lhs, const Color& rhs) 
 	{
 		return rhs * lhs;

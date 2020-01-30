@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "ds/Scene.hpp"
+#include "rendering/Material.hpp"
 #include "utility/FileManager.hpp"
 #include "utility/Randomizer.hpp"
 
@@ -19,9 +20,15 @@ rendering::Color compute_color(const geometry::Ray& ray, const ds::Scene& scene,
 	
 	if (scene.intersection(ray, 0.0001f, FLOAT_MAX, hit_record))
 	{
+		rendering::Color attenuation;
+		geometry::Ray newRay{ ray };
 		geometry::Vector4 target = hit_record.point + hit_record.normal +
 			utility::Randomizer::randomInUnitSphere();
-		return 0.5f * compute_color(geometry::Ray{ hit_record.point, target - hit_record.point }, scene, parameters);
+
+		if (hit_record.material->hit(ray, hit_record, newRay, attenuation))
+		{
+			return attenuation * compute_color(geometry::Ray{ hit_record.point, target - hit_record.point }, scene, parameters);
+		}
 	}
 
 	float t = 0.5f * (ray.getDirection().normalize().y() + 1);
