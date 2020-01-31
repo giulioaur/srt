@@ -23,29 +23,12 @@ public:
 	 *
 	 */
 	typedef struct hr {
-		bool hit;
-		float t;
-		const Hitable* object;
+		bool hit = false;
+		float t = FLOAT_MAX;
+		const Hitable* object = nullptr;
 		Vector4 point;
 		Vector4 normal;
-		std::shared_ptr<rendering::Material> material;
-
-		hr() : hit(false), t(-1), object(nullptr), point(), normal() { };
-
-		hr(bool h, float t, Hitable const *obj, const Vector4& point, const Vector4& normal, 
-			const std::shared_ptr<rendering::Material> material) 
-			: hit(h), t(t), object(obj), point(point), normal(normal), material(material) {}
-
-		struct hr& operator=(struct hr&& rhs)
-		{
-			hit = rhs.hit;
-			t = rhs.t;
-			object = rhs.object;
-			point = std::move(rhs.point);
-			normal = std::move(rhs.normal);
-			material = std::move(rhs.material);
-			return *this;
-		}
+		std::shared_ptr<rendering::Material> material = nullptr;
 	} s_hit_record;
 
 	// The record for no hit situation.

@@ -32,10 +32,10 @@ Metal::Metal(const rendering::Color& albedo, const float blurriness)
 bool Metal::hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hitRecord, 
 	geometry::Ray& newRay, rendering::Color& attenuation) const
 {
-	const geometry::Vector4 reflected = reflect(ray.getDirection(), hitRecord.normal);
+	const geometry::Vector4 reflected = reflect(ray.getDirection().normalize(), hitRecord.normal);
 	attenuation = m_albedo;
-	newRay = { hitRecord.hit, reflected + m_blurriness * utility::Randomizer::randomInUnitSphere() };
-	return true;
+	newRay = { hitRecord.point, reflected + m_blurriness * utility::Randomizer::randomInUnitSphere() };
+	return newRay.getDirection().dot(hitRecord.normal) > 0;
 }
 
 geometry::Vector4 Metal::reflect(const geometry::Vector4& direction, const geometry::Vector4& normal) const

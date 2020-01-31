@@ -13,12 +13,11 @@ namespace srt
 using s_hit_record = geometry::hitables::Hitable::s_hit_record;
 
 rendering::Color compute_color(const geometry::Ray& ray, const ds::Scene& scene,
-	const s_rt_parameter& parameters)
+	const s_rt_parameter& parameters, const int16_t depth)
 {
-	int32_t depth = 0;
 	s_hit_record hit_record;
 	
-	if (scene.intersection(ray, 0.0001f, FLOAT_MAX, hit_record))
+	if (depth < parameters.max_bounces && scene.intersection(ray, 0.0001f, FLOAT_MAX, hit_record))
 	{
 		rendering::Color attenuation;
 		geometry::Ray newRay{ ray };
@@ -27,7 +26,7 @@ rendering::Color compute_color(const geometry::Ray& ray, const ds::Scene& scene,
 
 		if (hit_record.material->hit(ray, hit_record, newRay, attenuation))
 		{
-			return attenuation * compute_color(geometry::Ray{ hit_record.point, target - hit_record.point }, scene, parameters);
+			return attenuation * compute_color(newRay, scene, parameters, depth + 1);
 		}
 	}
 
@@ -55,7 +54,7 @@ pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,
 				float u = ((float)i + random::randomFloat()) / width;
 				float v = ((float)j + random::randomFloat()) / height;
 
-				finalColor += compute_color(camera.getRay(u, v), scene, parameters);
+				finalColor += compute_color(camera.getRay(u, v), scene, parameters, 0);
 			}
 
 			finalColor /= parameters.antialiasing_samples;

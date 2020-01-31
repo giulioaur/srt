@@ -21,16 +21,27 @@ void Scene::addHitables(const std::vector<std::shared_ptr<geometry::hitables::Hi
 }
 
 const bool Scene::intersection(const geometry::Ray& ray, const float tmin, const float tmax, 
-	geometry::hitables::Hitable::s_hit_record& hit_record) const
+	geometry::hitables::Hitable::s_hit_record& hitRecord) const
 {
+	geometry::hitables::Hitable::s_hit_record tmpRecord;
+	geometry::hitables::Hitable::s_hit_record maxRecord;
+
 	for (const auto& hitable : m_hitables)
 	{
-		if (hitable->intersection(ray, tmin, tmax, hit_record))
+		if (hitable->intersection(ray, tmin, tmax, tmpRecord))
 		{
-			return true;
+			if (tmpRecord.t < maxRecord.t)
+			{
+				maxRecord = tmpRecord;
+			}
 		}
 	}
 
+	if (maxRecord.hit)
+	{
+		hitRecord = maxRecord;
+		return true;
+	}
 	return false;
 }
 

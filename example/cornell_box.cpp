@@ -25,7 +25,7 @@ int main(int argc, char** argv)
         srt::geometry::Vector4{ 0.f, 2.f, 0.f, 0.f },
         srt::geometry::Vector4{ -2.f, -1.f, -1.f, 0.f }
     };
-    const srt::s_rt_parameter parameters{ 100, 10 };
+    const srt::s_rt_parameter parameters{ 100, 50 };
 
     scene.addHitables({
         std::make_shared<srt::geometry::hitables::Sphere>(
@@ -41,12 +41,12 @@ int main(int argc, char** argv)
 		std::make_shared<srt::geometry::hitables::Sphere>(
 			srt::geometry::Vector4{ 1.f, 0.f, -1.f, 0.f },
 			0.5f,
-			std::make_shared<srt::rendering::Metal>(srt::rendering::Color{ 0.8f, 0.6f, 0.2f}, 0.f)
+			std::make_shared<srt::rendering::Metal>(srt::rendering::Color{ 0.8f, 0.6f, 0.2f}, 0.5f)
 		),
 		std::make_shared<srt::geometry::hitables::Sphere>(
 			srt::geometry::Vector4{ -1.f, 0.f, -1.f, 0.f },
 			0.5f,
-			std::make_shared<srt::rendering::Metal>(srt::rendering::Color{ 0, 0, 1}, 0.5f)
+			std::make_shared<srt::rendering::Metal>(srt::rendering::Color{ 0.8f, 0.8f, 0.8f}, 0.f)
 		)
     });
 

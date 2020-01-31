@@ -27,7 +27,7 @@ public:
 	//void buildBVH();
 	void addHitables(const std::vector<std::shared_ptr<geometry::hitables::Hitable>> &newHitables);
 	const bool intersection(const geometry::Ray& ray, const float tmin, const float tmax,
-		geometry::hitables::Hitable::s_hit_record& hit_record) const;
+		geometry::hitables::Hitable::s_hit_record& hitRecord) const;
 
 private:
 

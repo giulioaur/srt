@@ -24,11 +24,9 @@ public:
 	 * @param t0 - The time the camera starts to "record". It must be greater than 0, otherwise it will be set to 0.
 	 * @parma t1 - The time the camera stops to "record". It must be greater than t1, otherwise it will be set to t1.
 	 */
-	/*Camera(const geometry::Vector4 &lookFrom, const geometry::Vector4 &lookAt, const geometry::Vector4 &up,
+	Camera(const geometry::Vector4 &lookFrom, const geometry::Vector4 &lookAt, const geometry::Vector4 &up,
 		const float vfov, const float aspect, const float aperture, const float focusDist,
-		const float t0 = 0, const float t1 = 0);*/
-	Camera(const geometry::Vector4& lookFrom, const geometry::Vector4& horizontal, const geometry::Vector4& vertical,
-		const geometry::Vector4& llc);
+		const float t0 = 0, const float t1 = 0);
 
 	/**
 	 * @brief Returns the ray from the camera to the scene.
