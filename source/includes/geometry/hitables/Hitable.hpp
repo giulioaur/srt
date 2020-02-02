@@ -2,6 +2,7 @@
 
 #include "srt.h"
 
+#include "geometry/AABB.hpp"
 #include "geometry/Ray.hpp"
 #include "geometry/Vector4.hpp"
 
@@ -33,7 +34,6 @@ public:
 
 	// The record for no hit situation.
 	static const s_hit_record NO_HIT;
-	//static const std::shared_ptr<materials::Material> NO_MATERIAL;
 
 public:
 
@@ -45,26 +45,17 @@ public:
 	 * @param tmax - The max t to consider.
 	 * @return Hitable::s_hit_record - The record that stores hit info.
 	 */
-	virtual bool intersection(const Ray &ray, const float tmin, const float tmax, 
+	virtual bool intersect(const Ray &ray, const float tmin, const float tmax, 
 		s_hit_record& hit_record) const = 0;
 
-	///**
-	//	* @brief Get the Material of the object.
-	//	*
-	//	* @return const Material& - The material of the object.
-	//	*/
-	//virtual const std::shared_ptr<materials::Material> &getMaterial() const {
-	//	return NO_MATERIAL;
-	//}
-
-	///**
-	//	* @brief Returns the axis aligned bounded box boxes.
-	//	*
-	//	* @param t0 - The first instant of time to consider.
-	//	* @param t1 - The last instant of time to consider.
-	//	* @return std::unique_ptr<geometry::AABB> The axis aligned bounded box that surrounds the object.
-	//	*/
-	//virtual std::unique_ptr<geometry::AABB> getAABB(const float t0, const float t1) const = 0;
+	/**
+	 * @brief Returns the axis aligned bounded box boxes.
+	 *
+	 * @param t0 - The first instant of time to consider.
+	 * @param t1 - The last instant of time to consider.
+	 * @return std::unique_ptr<geometry::AABB> The axis aligned bounded box that surrounds the object.
+	 */
+	virtual const geometry::AABB getAABB(const float t0, const float t1) const noexcept = 0;
 
 	/**
 	 * @brief Get the Texture Coords of the object  in a given point.

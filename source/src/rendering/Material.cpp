@@ -10,12 +10,12 @@ Diffuse::Diffuse(const rendering::Color& albedo)
 {
 }
 
-bool Diffuse::hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hitRecord, 
+bool Diffuse::hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hit_record, 
 	geometry::Ray& newRay, rendering::Color& attenuation) const
 {
 	attenuation = m_albedo;
-	newRay = { hitRecord.point, 
-		hitRecord.point + hitRecord.normal + utility::Randomizer::randomInUnitSphere() };
+	newRay = { hit_record.point, 
+		hit_record.point + hit_record.normal + utility::Randomizer::randomInUnitSphere() };
 	return true;
 }
 
@@ -29,13 +29,13 @@ Metal::Metal(const rendering::Color& albedo, const float blurriness)
 {
 }
 
-bool Metal::hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hitRecord, 
+bool Metal::hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hit_record, 
 	geometry::Ray& newRay, rendering::Color& attenuation) const
 {
-	const geometry::Vector4 reflected = reflect(ray.getDirection().normalize(), hitRecord.normal);
+	const geometry::Vector4 reflected = reflect(ray.getDirection().normalize(), hit_record.normal);
 	attenuation = m_albedo;
-	newRay = { hitRecord.point, reflected + m_blurriness * utility::Randomizer::randomInUnitSphere() };
-	return newRay.getDirection().dot(hitRecord.normal) > 0;
+	newRay = { hit_record.point, reflected + m_blurriness * utility::Randomizer::randomInUnitSphere() };
+	return newRay.getDirection().dot(hit_record.normal) > 0;
 }
 
 geometry::Vector4 Metal::reflect(const geometry::Vector4& direction, const geometry::Vector4& normal) const

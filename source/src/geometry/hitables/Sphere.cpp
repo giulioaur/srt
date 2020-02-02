@@ -23,7 +23,7 @@ bool Sphere::operator != (const Hitable& hitable) const {
     return false;
 }
 
-bool Sphere::intersection(const Ray& ray, const float tmin, const float tmax,
+bool Sphere::intersect(const Ray& ray, const float tmin, const float tmax,
     Hitable::s_hit_record& hit_record) const 
 {
     const Vector4 dist = ray.getOrigin() - m_center;
@@ -51,24 +51,20 @@ bool Sphere::intersection(const Ray& ray, const float tmin, const float tmax,
 }
 
 /**
-    * @brief Returns the normal to the circle of a given point.
-    *
-    * @param pos - The position on which compute the normal.
-    * @return srt::geometry::Vector4 getNormal - The normal to the circle at given point.
-    */
-Vector4 Sphere::getNormal(const Vector4& pos) const {
+ * @brief Returns the normal to the circle of a given point.
+ *
+ * @param pos - The position on which compute the normal.
+ * @return srt::geometry::Vector4 getNormal - The normal to the circle at given point.
+ */
+Vector4 Sphere::getNormal(const Vector4& pos) const 
+{
     return (pos - m_center) / m_radius;
 }
 
-///**
-//    * @brief Returns the surrounding axis aligned bounding box.
-//    *
-//    * @return std::unique_ptr<geometry::AABB> The surrounding axis aligned boundig box, nullptr
-//    *                                          if it does not exist.
-//    */
-//std::unique_ptr<geometry::AABB> Sphere::getAABB(const float t0, const float t1) const {
-//    return make_unique<AABB>(m_center - Vector4{ radius }, m_center + Vector4{ radius });
-//}
+const geometry::AABB Sphere::getAABB(const float t0, const float t1) const noexcept
+{
+    return AABB{ m_center - Vector4{ m_radius }, m_center + Vector4{ m_radius } };
+}
 
 ///**
 //    * @brief Returns the u/v coords of a texture sphere in a given point.

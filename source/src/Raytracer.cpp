@@ -17,7 +17,7 @@ rendering::Color compute_color(const geometry::Ray& ray, const ds::Scene& scene,
 {
 	s_hit_record hit_record;
 	
-	if (depth < parameters.max_bounces && scene.intersection(ray, 0.0001f, FLOAT_MAX, hit_record))
+	if (depth < parameters.max_bounces && scene.intersect(ray, 0.0001f, FLOAT_MAX, hit_record))
 	{
 		rendering::Color attenuation;
 		geometry::Ray newRay{ ray };

@@ -12,7 +12,7 @@ class Material
 {
 public: 
 
-	virtual bool hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hitRecord,
+	virtual bool hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hit_record,
 		geometry::Ray& newRay, rendering::Color& attenuation) const = 0;
 
 };
@@ -24,7 +24,7 @@ public:
 
 	Diffuse(const rendering::Color& albedo);
 
-	virtual bool hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hitRecord,
+	virtual bool hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hit_record,
 		geometry::Ray& newRay, rendering::Color& attenuation) const;
 
 private:
@@ -38,7 +38,7 @@ public:
 
 	Metal(const rendering::Color& albedo, const float blurriness);
 
-	virtual bool hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hitRecord,
+	virtual bool hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hit_record,
 		geometry::Ray& newRay, rendering::Color& attenuation) const;
 
 private:

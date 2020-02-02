@@ -27,9 +27,9 @@ public:
     virtual Vector4 getNormal(const Vector4& pos) const;
 	virtual const std::shared_ptr<rendering::Material>& getMaterial() const { return m_material; };
 
-    virtual bool intersection(const Ray& ray, const float tmin, const float tmax,
-        Hitable::s_hit_record& hit_record) const;
-    //virtual std::unique_ptr<AABB> getAABB(const float t0, const float t1) const;
+    virtual bool intersect(const Ray& ray, const float tmin, const float tmax,
+        Hitable::s_hit_record& hit_record) const override;
+    virtual const geometry::AABB getAABB(const float t0, const float t1) const noexcept override;
 	//virtual Vector4 getTextureCoords(const Vector4& p) const;
 
 	// OPERATORS
