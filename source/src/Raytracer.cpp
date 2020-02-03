@@ -24,14 +24,19 @@ rendering::Color compute_color(const geometry::Ray& ray, const ds::Scene& scene,
 		geometry::Vector4 target = hit_record.point + hit_record.normal +
 			utility::Randomizer::randomInUnitSphere();
 
-		if (hit_record.material->hit(ray, hit_record, newRay, attenuation))
+		if (hit_record.material->bounce(ray, hit_record, newRay, attenuation))
 		{
 			return attenuation * compute_color(newRay, scene, parameters, depth + 1);
 		}
+		else
+		{
+			return attenuation;
+		}
 	}
-
-	float t = 0.5f * (ray.getDirection().normalize().y() + 1);
-	return (1.f - t) * rendering::Color(1.f, 1.f, 1.f) + t * rendering::Color(0.5f, 0.7f, 1.f);
+	
+	return parameters.backgroundColor;
+	//float t = 0.5f * (ray.getDirection().normalize().y() + 1);
+	//return (1.f - t) * rendering::Color(1.f, 1.f, 1.f) + t * rendering::Color(0.5f, 0.7f, 1.f);
 }
 
 pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,

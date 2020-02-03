@@ -40,6 +40,8 @@ public:
 
 private:
 
+	TextureCoords getTextureCoordsOnPoint(const Vector4& point) const;
+
     const Vector4 m_center;
     float m_radius;
     const std::shared_ptr<rendering::Material> m_material;

@@ -1,6 +1,7 @@
 #include "geometry/hitables/Sphere.hpp"
 
 #include <algorithm>
+#include <cmath>
 
 namespace srt::geometry::hitables
 {
@@ -44,7 +45,16 @@ bool Sphere::intersect(const Ray& ray, const float tmin, const float tmax,
 
     if (t >= tmin && t <= tmax)
     {
-        hit_record = { true, t, this, ray.getPoint(t), this->getNormal(ray.getPoint(t)), m_material };
+		const Vector4 hitPoint = ray.getPoint(t);
+        hit_record = { 
+			true, 
+			t, 
+			this, 
+			hitPoint,
+			this->getNormal(ray.getPoint(t)), 
+			m_material, 
+			getTextureCoordsOnPoint(hitPoint)
+		};
         return true;
     }
     return false;
@@ -66,20 +76,16 @@ const geometry::AABB Sphere::getAABB(const float t0, const float t1) const noexc
     return AABB{ m_center - Vector4{ m_radius }, m_center + Vector4{ m_radius } };
 }
 
-///**
-//    * @brief Returns the u/v coords of a texture sphere in a given point.
-//    *
-//    * @param p - The point hit in the sphere.
-//    * @return geometry::Vector4 - The vector in which x = u, y = v and z = 0.
-//    */
-//Vector4 Sphere::getTextureCoords(const Vector4& p) const {
-//    // Compute the phi and theta angle.
-//    float phi = atan2(p.z(), p.x()), theta = asin(p.y());
-//    // Compute the u and v coords.
-//    float u = 1 - (phi + M_PI) / (2 * M_PI),
-//        v = (theta + M_PI / 2) / M_PI;
+srt::geometry::hitables::TextureCoords Sphere::getTextureCoordsOnPoint(const Vector4& p) const
+{
+	// Compute the phi and theta angle.
+    float phi = atan2(p.z(), p.x()), theta = asin(p.y());
 
-//    return{ u, v, 0 };
-//}
+    // Compute the u and v coords.
+    float u = 1 - (phi + M_PI) / (2 * M_PI),
+          v = (theta + M_PI / 2) / M_PI;
+
+    return{ u, v };
+}
 
 }

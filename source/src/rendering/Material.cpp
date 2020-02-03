@@ -5,15 +5,15 @@
 namespace srt::rendering
 {
 
-Diffuse::Diffuse(const rendering::Color& albedo)
+Diffuse::Diffuse(const std::shared_ptr<rendering::Texture>& albedo)
 	: m_albedo(albedo)
 {
 }
 
-bool Diffuse::hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hit_record, 
+bool Diffuse::bounce(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hit_record,
 	geometry::Ray& newRay, rendering::Color& attenuation) const
 {
-	attenuation = m_albedo;
+	attenuation = m_albedo->getColor(hit_record.textureCoords[0], hit_record.textureCoords[1]);
 	newRay = { hit_record.point, 
 		hit_record.point + hit_record.normal + utility::Randomizer::randomInUnitSphere() };
 	return true;
@@ -23,17 +23,17 @@ bool Diffuse::hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s
 
 
 
-Metal::Metal(const rendering::Color& albedo, const float blurriness)
+Metal::Metal(const std::shared_ptr<rendering::Texture>& albedo, const float blurriness)
 	: m_albedo(albedo)
 	, m_blurriness(blurriness)
 {
 }
 
-bool Metal::hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hit_record, 
+bool Metal::bounce(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hit_record,
 	geometry::Ray& newRay, rendering::Color& attenuation) const
 {
 	const geometry::Vector4 reflected = reflect(ray.getDirection().normalize(), hit_record.normal);
-	attenuation = m_albedo;
+	attenuation = m_albedo->getColor(hit_record.textureCoords[0], hit_record.textureCoords[1]);
 	newRay = { hit_record.point, reflected + m_blurriness * utility::Randomizer::randomInUnitSphere() };
 	return newRay.getDirection().dot(hit_record.normal) > 0;
 }
@@ -41,6 +41,22 @@ bool Metal::hit(const geometry::Ray& ray, const geometry::hitables::Hitable::s_h
 geometry::Vector4 Metal::reflect(const geometry::Vector4& direction, const geometry::Vector4& normal) const
 {
 	return direction - 2 * direction.dot(normal) * normal;
+}
+
+
+
+
+
+DiffuseLight::DiffuseLight(const rendering::Color& lightColor)
+	: m_albedo(lightColor)
+{
+}
+
+bool DiffuseLight::bounce(const geometry::Ray& ray, const geometry::hitables::Hitable::s_hit_record& hit_record, 
+	geometry::Ray& newRay, rendering::Color& attenuation) const
+{
+	attenuation = m_albedo;
+	return false;
 }
 
 }

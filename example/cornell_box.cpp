@@ -38,6 +38,11 @@ int main(int argc, char** argv)
 			srt::geometry::Vector4{ -1.f, 0.f, -1.f, 0.f },
 			0.5f,
 			std::make_shared<srt::rendering::Metal>(srt::rendering::Color{ 0.8f, 0.8f, 0.8f}, 0.f)
+		),
+		std::make_shared<srt::geometry::hitables::Sphere>(
+			srt::geometry::Vector4{ 0.f, 1.5f, -1.f, 0.f },
+			0.5f,
+			std::make_shared<srt::rendering::DiffuseLight>(srt::rendering::Color{ 1.f, 1.f, 1.f})
 		)
 	};
 	srt::ds::Scene scene{
@@ -50,7 +55,7 @@ int main(int argc, char** argv)
         srt::geometry::Vector4{ 0.f, 0.f, 0.f, 0.f },
 		srt::geometry::Vector4{ 0.f, 0.f, -1.f, 0.f },
 		srt::geometry::Vector4{ 0.f, 1.f, 0.f, 0.f },
-		85,
+		125,
 		static_cast<float>(scene.getWidth() / scene.getHeight()),
 		0,
 		1

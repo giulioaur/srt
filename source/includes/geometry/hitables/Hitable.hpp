@@ -2,6 +2,8 @@
 
 #include "srt.h"
 
+#include <array>
+
 #include "geometry/AABB.hpp"
 #include "geometry/Ray.hpp"
 #include "geometry/Vector4.hpp"
@@ -13,6 +15,8 @@ namespace srt::rendering
 
 namespace srt::geometry::hitables 
 {
+
+using TextureCoords = std::array<float, 2>;
 
 class Hitable 
 {
@@ -30,6 +34,7 @@ public:
 		Vector4 point;
 		Vector4 normal;
 		std::shared_ptr<rendering::Material> material = nullptr;
+		TextureCoords textureCoords;
 	} s_hit_record;
 
 	// The record for no hit situation.
@@ -56,17 +61,6 @@ public:
 	 * @return std::unique_ptr<geometry::AABB> The axis aligned bounded box that surrounds the object.
 	 */
 	virtual const geometry::AABB getAABB(const float t0, const float t1) const noexcept = 0;
-
-	/**
-	 * @brief Get the Texture Coords of the object  in a given point.
-	 *
-	 * @param p - The hit point on the object.
-	 * @return Vector4 - The texture coords.
-	 */
-	virtual Vector4 getTextureCoords(const Vector4& p) const 
-	{
-		return p;
-	}
 };
 
 }
