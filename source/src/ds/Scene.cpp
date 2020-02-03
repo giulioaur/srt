@@ -41,7 +41,7 @@ const bool Scene::intersect(const geometry::Ray& ray, const float tmin, const fl
 		return true;
 	}
 	return false;
-	//return m_hitablesTree.intersect(ray, tmin, tmax, hit_record);
+	return m_hitablesTree.intersect(ray, tmin, tmax, hit_record);
 }
 
 }

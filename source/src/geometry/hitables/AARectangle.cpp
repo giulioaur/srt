@@ -2,7 +2,7 @@
 
 namespace srt::geometry::hitables
 {
-AARectangle::AARectangle(const AARectangle::Type type, const float a0_0, const float a0_1, const float a1_0, const float a1_1,
+AARectangle::AARectangle(const AARectangle::e_type type, const float a0_0, const float a0_1, const float a1_0, const float a1_1,
 	const float k, const std::shared_ptr<rendering::Material> material, bool flipNormal) 
 	: m_type(type)
 	, m_axis0_0(a0_0)
@@ -19,9 +19,10 @@ Vector4 AARectangle::getNormal(const Vector4 &pos) const
 {
 	switch (m_type) 
 	{
-	case AARectangle::XY: return{ 0, 0, m_isNormalFlipped ? -1.f : 1.f, 0 };
-	case AARectangle::XZ: return{ 0, m_isNormalFlipped ? -1.f : 1.f, 0, 0 };
-	case AARectangle::YZ: return{ m_isNormalFlipped ? -1.f : 1.f, 0, 0, 0 };
+	case AARectangle::XY:	return{ 0, 0, m_isNormalFlipped ? -1.f : 1.f, 0 };
+	case AARectangle::XZ:	return{ 0, m_isNormalFlipped ? -1.f : 1.f, 0, 0 };
+	case AARectangle::YZ:	return{ m_isNormalFlipped ? -1.f : 1.f, 0, 0, 0 };
+	default:				return{ 0, 0, 0, 0 };
 	}
 }
 
@@ -40,6 +41,7 @@ bool AARectangle::intersect(const Ray &ray, const float tmin, const float tmax,
 		// First axis = x, second axis = z, last axis = y.
 		a0 = 0; a1 = 2; a2 = 1; break;
 	case AARectangle::YZ:
+	default:
 		// First axis = y, second axis = z, last axis = x.
 		a0 = 1; a1 = 2; a2 = 0; break;
 	}
@@ -79,6 +81,11 @@ const geometry::AABB AARectangle::getAABB(const float t0, const float t1) const 
 			Vector4{ m_k - 0.0001f, m_axis0_0, m_axis1_0, 0 },
 			Vector4{ m_k + 0.0001f, m_axis0_1, m_axis1_1, 0 }
 		};
+	default:
+		return geometry::AABB{
+			Vector4{ 0, 0, 0, 0 },
+			Vector4{ 0, 0, 0, 0 }
+		};
 	}
 }
 
@@ -94,6 +101,8 @@ TextureCoords AARectangle::getTextureCoords(const Vector4 &p) const
 	case AARectangle::YZ:
 		return { (p.y() - m_axis0_0) / (m_axis0_1 - m_axis0_0),
 				(p.z() - m_axis1_0) / (m_axis1_1 - m_axis1_0)};
+	default:
+		return { 0, 0 };
 	}
 }
 

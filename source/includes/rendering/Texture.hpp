@@ -22,8 +22,8 @@ public:
 
 private:
 
-	int16_t m_width;
-	int16_t m_height;
+	int32_t m_width;
+	int32_t m_height;
 	std::vector<Color> m_colors;
 
 };

@@ -10,7 +10,7 @@ namespace srt::geometry::hitables
 class AARectangle : public Hitable {
 public:
 	/// The type of the axis aligned rectangle.
-	enum Type { XY, XZ, YZ };
+	enum e_type { XY, XZ, YZ };
 
 public:
 
@@ -25,7 +25,7 @@ public:
 	 * @param t - The distance from the last axis.
 	 * @param material - The material of the rectangle.
 	 */
-	AARectangle(const AARectangle::Type type, const float a0_0, const float a0_1, const float a1_0, const float a1_1,
+	AARectangle(const AARectangle::e_type type, const float a0_0, const float a0_1, const float a1_0, const float a1_1,
 		const float k, const std::shared_ptr<rendering::Material> material, bool flipNormal = false);
 
 	virtual Vector4 getNormal(const Vector4& pos) const;
@@ -37,7 +37,7 @@ private:
 
 	TextureCoords getTextureCoords(const Vector4 &p) const;
 
-	Type m_type;
+	e_type m_type;
 	bool m_isNormalFlipped;
 	std::shared_ptr<rendering::Material> m_material;
 	float m_axis0_0;

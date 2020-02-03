@@ -10,7 +10,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 ######################### TARGET FILE #########################
 if(NOT TARGET_FILE)
-  set(TARGET_FILE basic_raytracer)
+  set(TARGET_FILE srt)
 endif(NOT TARGET_FILE)
 
 ######################### RAYTRACER FILES #########################
@@ -28,7 +28,7 @@ foreach(_source IN ITEMS ${PROJECT_FILES})
 endforeach()
 
 ######################### EXAMPLES #########################
-set(EXAMPLE_SOURCE_FILES ${PROJECT_SOURCE_DIR}/example/cornell_box.cpp)
+set(EXAMPLE_SOURCE_FILES ${PROJECT_SOURCE_DIR}/example/standard_scene.cpp)
 
 ######################### EXECUTABLE #########################
 add_executable(${TARGET_FILE} ${EXAMPLE_SOURCE_FILES} ${PROJECT_FILES})

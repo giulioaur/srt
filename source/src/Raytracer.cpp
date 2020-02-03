@@ -48,7 +48,7 @@ pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,
 	const int32_t height = scene.getHeight();
 	const int32_t width = scene.getWidth();
 
-	pixels.resize(height * width);
+	pixels.reserve(height * width);
 
 	for (size_t j = height; j > 0; --j) {
 		for (size_t i = 0; i < width; ++i) {
@@ -65,7 +65,7 @@ pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,
 			finalColor /= parameters.antialiasing_samples;
 
 			// #TODO_OPTIMIZATION Use a simple gamma correction.
-			pixels[(height - j) * width + i] = rendering::Color(
+			pixels.emplace_back(
 				sqrt(finalColor.x()) * 255.99f,
 				sqrt(finalColor.y()) * 255.99f,
 				sqrt(finalColor.z()) * 255.99f

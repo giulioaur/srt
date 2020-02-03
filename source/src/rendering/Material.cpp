@@ -15,7 +15,7 @@ bool Diffuse::bounce(const geometry::Ray& ray, const geometry::hitables::Hitable
 {
 	attenuation = m_albedo->getColor(hit_record.textureCoords[0], hit_record.textureCoords[1]);
 	newRay = { hit_record.point, 
-		hit_record.point + hit_record.normal + utility::Randomizer::randomInUnitSphere() };
+		(hit_record.point + hit_record.normal + utility::Randomizer::randomInUnitSphere()) - hit_record.point };
 	return true;
 }
 

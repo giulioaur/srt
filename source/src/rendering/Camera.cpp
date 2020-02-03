@@ -16,7 +16,7 @@ Camera::Camera(const geometry::Vector4& lookFrom, const geometry::Vector4& lookA
 	geometry::Vector4 w = (lookFrom - lookAt).normalize();
 	m_u = w.cross(up).normalize();
 	m_v = m_u.cross(w).normalize();
-	float theta = vfov * M_PI / 180.;
+	float theta = vfov * M_PI / 180.f;
 	float half_height = tan(theta / 2);
 	float half_width = aspect * half_height;
 
