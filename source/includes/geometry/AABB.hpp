@@ -9,6 +9,8 @@
  *******************************************************/
 #pragma once
 
+#include <array>
+
 #include "Vector4.hpp"
 #include "Ray.hpp"
 
@@ -30,7 +32,8 @@ public:
     AABB(Vector4&& min, Vector4&& max);
 
     const Vector4& getMin() const noexcept { return m_min; };
-    const Vector4& getMax() const noexcept { return m_max; };
+	const Vector4& getMax() const noexcept { return m_max; };
+	Vector4 getSize() const noexcept { return m_max - m_min; };
 
     bool intersect(const Ray& ray, float tmin, float tmax) const;
 
@@ -40,7 +43,10 @@ public:
      * @param box - The other box to contain.
      * @return AABB - The aabb containing the two boxes.
      */
-    AABB getSurroundingBox(const AABB& box) const;
+	AABB getSurroundingBox(const AABB& box) const;
+
+	bool collide(const AABB& box) const;
+	std::array<float, 2> getCollisionPoints(const Ray& ray, float tmin, float tmax) const;
 
 private:
 

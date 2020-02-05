@@ -14,7 +14,7 @@ void cornell_box();
 
 int main(int argc, char** argv)
 {
-	cornell_box();
+	base_scene();
 
     return 0;
 }
