@@ -5,57 +5,45 @@
 namespace srt::rendering
 {
 
-class Color : public geometry::Vector4
+class Color : public geometry::Vector4SIMD
 {
 public:
 
+	using Super = geometry::Vector4SIMD;
+
 	Color()
-		: geometry::Vector4() { }
+		: Super() { }
 
 	Color(float r, float g, float b)
-		: geometry::Vector4(r, g, b, 0){ }
+		: Super(r, g, b, 0){ }
 
-	Color(const Color& other)
-		: geometry::Vector4(other.x(), other.y(), other.z(), 0) { }
+	Color(const Super& other)
+		: Super(other) { }
 
-	Color operator+(const Color& rhs) const
+	Color(Super&& other)
+		: Super(other) { }
+
+	Color(const Color& other) noexcept
+		: Super(other) { }
+
+	Color(Color&& other) noexcept
+		: Super(other) { }
+
+	Color operator* (const Color& rhs) const
 	{
-		return Color{
-			x() + rhs.x(),
-			y() + rhs.y(),
-			z() + rhs.z()
-		};
+		return Super::mul(rhs);
 	}
 
-	Color operator+=(const Color& rhs)
+	Color operator= (const Color& rhs) noexcept
 	{
-		x() += rhs.x();
-		y() += rhs.y();
-		z() += rhs.z();
+		Super::operator=(rhs);
 		return *this;
 	}
 
-	Color operator * (const float rhs) const
+	Color operator= (Color&& rhs) noexcept
 	{
-		return Color{
-			x() * rhs,
-			y() * rhs,
-			z() * rhs
-		};
-	}
-
-	Color operator * (const Color& rhs) const
-	{
-		return Color{
-			x() * rhs.x(),
-			y() * rhs.y(),
-			z() * rhs.z()
-		};
-	}
-
-	friend Color operator* (const float lhs, const Color& rhs) 
-	{
-		return rhs * lhs;
+		Super::operator=(rhs);
+		return *this;
 	}
 };
 

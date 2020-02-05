@@ -19,9 +19,9 @@ Vector4 AARectangle::getNormal(const Vector4 &pos) const
 {
 	switch (m_type) 
 	{
-	case AARectangle::XY:	return{ 0, 0, m_isNormalFlipped ? -1.f : 1.f, 0 };
-	case AARectangle::XZ:	return{ 0, m_isNormalFlipped ? -1.f : 1.f, 0, 0 };
-	case AARectangle::YZ:	return{ m_isNormalFlipped ? -1.f : 1.f, 0, 0, 0 };
+	case AARectangle::e_type::XY:	return{ 0, 0, m_isNormalFlipped ? -1.f : 1.f, 0 };
+	case AARectangle::e_type::XZ:	return{ 0, m_isNormalFlipped ? -1.f : 1.f, 0, 0 };
+	case AARectangle::e_type::YZ:	return{ m_isNormalFlipped ? -1.f : 1.f, 0, 0, 0 };
 	default:				return{ 0, 0, 0, 0 };
 	}
 }
@@ -34,13 +34,13 @@ bool AARectangle::intersect(const Ray &ray, const float tmin, const float tmax,
 
 	// Set the index of the coords for the three axis.
 	switch (m_type) {
-	case AARectangle::XY:
+	case AARectangle::e_type::XY:
 		// First axis = x, second axis = y, last axis = z.
 		a0 = 0; a1 = 1; a2 = 2; break;
-	case AARectangle::XZ:
+	case AARectangle::e_type::XZ:
 		// First axis = x, second axis = z, last axis = y.
 		a0 = 0; a1 = 2; a2 = 1; break;
-	case AARectangle::YZ:
+	case AARectangle::e_type::YZ:
 	default:
 		// First axis = y, second axis = z, last axis = x.
 		a0 = 1; a1 = 2; a2 = 0; break;
@@ -66,17 +66,17 @@ bool AARectangle::intersect(const Ray &ray, const float tmin, const float tmax,
 const geometry::AABB AARectangle::getAABB(const float t0, const float t1) const noexcept
 {
 	switch (m_type) {
-	case AARectangle::XY:
+	case AARectangle::e_type::XY:
 		return geometry::AABB{ 
 			Vector4{ m_axis0_0, m_axis1_0, m_k - 0.0001f, 0 },
 			Vector4{ m_axis0_1, m_axis1_1, m_k + 0.0001f, 0 }
 		};
-	case AARectangle::XZ:
+	case AARectangle::e_type::XZ:
 		return geometry::AABB{
 			Vector4{ m_axis0_0, m_k - 0.0001f, m_axis1_0, 0 },
 			Vector4{ m_axis0_1, m_k + 0.0001f, m_axis1_1, 0 }
 		};
-	case AARectangle::YZ:
+	case AARectangle::e_type::YZ:
 		return geometry::AABB{
 			Vector4{ m_k - 0.0001f, m_axis0_0, m_axis1_0, 0 },
 			Vector4{ m_k + 0.0001f, m_axis0_1, m_axis1_1, 0 }
@@ -92,13 +92,13 @@ const geometry::AABB AARectangle::getAABB(const float t0, const float t1) const 
 TextureCoords AARectangle::getTextureCoords(const Vector4 &p) const
 {
 	switch (m_type) {
-	case AARectangle::XY:
+	case AARectangle::e_type::XY:
 		return { (p.x() - m_axis0_0) / (m_axis0_1 - m_axis0_0),
 				(p.y() - m_axis1_0) / (m_axis1_1 - m_axis1_0)};
-	case AARectangle::XZ:
+	case AARectangle::e_type::XZ:
 		return { (p.x() - m_axis0_0) / (m_axis0_1 - m_axis0_0),
 				(p.z() - m_axis1_0) / (m_axis1_1 - m_axis1_0) };
-	case AARectangle::YZ:
+	case AARectangle::e_type::YZ:
 		return { (p.y() - m_axis0_0) / (m_axis0_1 - m_axis0_0),
 				(p.z() - m_axis1_0) / (m_axis1_1 - m_axis1_0)};
 	default:
@@ -110,15 +110,15 @@ TextureCoords AARectangle::getTextureCoords(const Vector4 &p) const
 //Vector4 AARectangle::getTextureCoords(const geometry::Vector4 &p) const 
 //{
 //	switch (m_type) {
-//	case AARectangle::XY:
+//	case AARectangle::e_type::XY:
 //		return { (p.x() - m_axis0_0) / (m_axis0_1 - m_axis0_0),
 //				(p.y() - m_axis1_0) / (m_axis1_1 - m_axis1_0),
 //				0 };
-//	case AARectangle::XZ:
+//	case AARectangle::e_type::XZ:
 //		return { (p.x() - m_axis0_0) / (m_axis0_1 - m_axis0_0),
 //				(p.z() - m_axis1_0) / (m_axis1_1 - m_axis1_0),
 //				0 };
-//	case AARectangle::YZ:
+//	case AARectangle::e_type::YZ:
 //		return { (p.y() - m_axis0_0) / (m_axis0_1 - m_axis0_0),
 //				(p.z() - m_axis1_0) / (m_axis1_1 - m_axis1_0),
 //				0 };

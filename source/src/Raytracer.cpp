@@ -13,30 +13,52 @@ namespace srt
 using s_hit_record = geometry::hitables::Hitable::s_hit_record;
 
 rendering::Color compute_color(const geometry::Ray& ray, const ds::Scene& scene,
-	const s_rt_parameter& parameters, const int16_t depth)
+	const s_rt_parameter& parameters, const int16_t inDepth = 0)
 {
+	//s_hit_record hit_record;
+	//
+	//if (depth < parameters.max_bounces && scene.intersect(ray, 0.0001f, FLOAT_MAX, hit_record))
+	//{
+	//	rendering::Color attenuation;
+	//	geometry::Ray newRay{ ray };
+	//	geometry::Vector4 target = hit_record.point + hit_record.normal +
+	//		utility::Randomizer::randomInUnitSphere();
+
+	//	if (hit_record.material->bounce(ray, hit_record, newRay, attenuation))
+	//	{
+	//		return attenuation * compute_color(newRay, scene, parameters, depth + 1);
+	//	}
+	//	else
+	//	{
+	//		return attenuation;
+	//	}
+	//}
+	//
+	//return parameters.backgroundColor;
+
+	int16_t depth = inDepth;
 	s_hit_record hit_record;
-	
-	if (depth < parameters.max_bounces && scene.intersect(ray, 0.0001f, FLOAT_MAX, hit_record))
+	rendering::Color currentColor{ 1 };
+	rendering::Color attenuation;
+	geometry::Ray oldRay{ ray };
+	geometry::Ray newRay{ ray };
+
+	while (depth < parameters.max_bounces && scene.intersect(oldRay, 0.0001f, FLOAT_MAX, hit_record))
 	{
-		rendering::Color attenuation;
-		geometry::Ray newRay{ ray };
 		geometry::Vector4 target = hit_record.point + hit_record.normal +
 			utility::Randomizer::randomInUnitSphere();
+		++depth;
 
-		if (hit_record.material->bounce(ray, hit_record, newRay, attenuation))
+		if (!hit_record.material->bounce(ray, hit_record, newRay, attenuation))
 		{
-			return attenuation * compute_color(newRay, scene, parameters, depth + 1);
+			return currentColor * attenuation;
 		}
-		else
-		{
-			return attenuation;
-		}
+
+		currentColor *= attenuation;
+		oldRay = std::move(newRay);
 	}
-	
-	return parameters.backgroundColor;
-	//float t = 0.5f * (ray.getDirection().normalize().y() + 1);
-	//return (1.f - t) * rendering::Color(1.f, 1.f, 1.f) + t * rendering::Color(0.5f, 0.7f, 1.f);
+
+	return depth < parameters.max_bounces ? currentColor * parameters.backgroundColor : currentColor;
 }
 
 pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,
@@ -59,7 +81,7 @@ pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,
 				float u = ((float)i + random::randomFloat()) / width;
 				float v = ((float)j + random::randomFloat()) / height;
 
-				finalColor += compute_color(camera.getRay(u, v), scene, parameters, 0);
+				finalColor += compute_color(camera.getRay(u, v), scene, parameters);
 			}
 
 			finalColor /= parameters.antialiasing_samples;

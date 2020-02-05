@@ -10,7 +10,7 @@ namespace srt::geometry::hitables
 class AARectangle : public Hitable {
 public:
 	/// The type of the axis aligned rectangle.
-	enum e_type { XY, XZ, YZ };
+	enum class e_type : uint8_t { XY, XZ, YZ };
 
 public:
 
@@ -45,6 +45,8 @@ private:
 	float m_axis1_0; 
 	float m_axis1_1;
 	float m_k;
+
+	friend class AABox;
 };
 
 }

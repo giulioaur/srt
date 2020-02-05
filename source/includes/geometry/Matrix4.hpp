@@ -12,30 +12,25 @@
 namespace srt::geometry
 {
 
-#ifdef MATH_USE_SIMD
 
-#include <xmmintrin.h>
-#include <intrin.h>
-
-template <>
-class Matrix4 <float>
+class Matrix4SIMD
 {
 public:
 
-	Matrix4();					// Identity matrix
-	Matrix4(const float val);
-	Matrix4(const float x0, const float y0, const float z0, const float w0,
+	Matrix4SIMD();					// Identity matrix
+	Matrix4SIMD(const float val);
+	Matrix4SIMD(const float x0, const float y0, const float z0, const float w0,
 			const float x1, const float y1, const float z1, const float w1,
 			const float x2, const float y2, const float z2, const float w2,
 			const float x3, const float y3, const float z3, const float w3);
 	//Matrix4(const float arr[4][4]);
-	Matrix4(const Matrix4<float>& other);
-	Matrix4(Matrix4<float>&& other);
+	Matrix4SIMD(const Matrix4SIMD& other) noexcept;
+	Matrix4SIMD(Matrix4SIMD&& other) noexcept;
 
 	/*********************** GETTER ***********************/
 
-	Vector4<float> raw(const umsize index) const noexcept;
-	Vector4<float> col(const umsize index) const noexcept;
+	Vector4SIMD raw(const umsize index) const noexcept;
+	Vector4SIMD col(const umsize index) const noexcept;
 
 	float& elem(const umsize raw, const umsize col);
 	float elem(const umsize raw, const umsize col) const;
@@ -47,24 +42,24 @@ public:
 	 *
 	 * @return The transposed matrix.
 	 */
-	Matrix4<float> transpose() const noexcept;
+	Matrix4SIMD transpose() const noexcept;
 
 	/*********************** OPERATORS ***********************/
 
 	//float* operator[](const umsize index);
 	//const float* const operator[](const umsize index) const;
 
-	Matrix4<float>& operator=(const Matrix4<float>& rhs);
-	Matrix4<float>& operator=(Matrix4<float>&& rhs);
+	Matrix4SIMD& operator=(const Matrix4SIMD& rhs) noexcept;
+	Matrix4SIMD& operator=(Matrix4SIMD&& rhs) noexcept;
 
 	//Matrix4 operator+(const Matrix4& rhs) const;
 	//Matrix4 operator-(const Matrix4& rhs) const;
-	Matrix4<float> operator*(const Matrix4<float>& rhs) const;
-	Vector4<float> operator*(const Vector4<float>& rhs) const;
+	Matrix4SIMD operator*(const Matrix4SIMD& rhs) const;
+	Vector4SIMD operator*(const Vector4SIMD& rhs) const;
 
 private:
 
-	Vector4<float> vectorMul(const Vector4<float>& lhs) const;
+	Vector4SIMD vectorMul(const Vector4SIMD& lhs) const;
 
 	/**
 	 * The matrix is saved as col-matrix to allow faster vector-matrix multiplication.
@@ -82,12 +77,12 @@ private:
 
 public:
 
-	friend Vector4<float> operator*(const Vector4<float>& lhs, const Matrix4<float>& rhs)
+	friend Vector4SIMD operator*(const Vector4SIMD& lhs, const Matrix4SIMD& rhs)
 	{
 		return rhs.vectorMul(lhs);
 	};
 
-	friend void swap(Matrix4<float>& a, Matrix4<float>& b)
+	friend void swap(Matrix4SIMD& a, Matrix4SIMD& b)
 	{
 		srt::swap(a.m_data.cols[0], b.m_data.cols[0]);
 		srt::swap(a.m_data.cols[1], b.m_data.cols[1]);
@@ -104,7 +99,7 @@ public:
 //											DEFINITIONS											 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-INLINE Matrix4<float>::Matrix4()
+INLINE Matrix4SIMD::Matrix4SIMD()
 {
 	m_data.cols[0] = _mm_set_ps(0, 0, 0, 1);
 	m_data.cols[1] = _mm_set_ps(0, 0, 1, 0);
@@ -112,7 +107,7 @@ INLINE Matrix4<float>::Matrix4()
 	m_data.cols[3] = _mm_set_ps(1, 0, 0, 0);
 }
 
-INLINE Matrix4<float>::Matrix4(const float val)
+INLINE Matrix4SIMD::Matrix4SIMD(const float val)
 {
 	m_data.cols[0] = _mm_set_ps(val, val, val, val);
 	m_data.cols[1] = _mm_set_ps(val, val, val, val);
@@ -120,7 +115,7 @@ INLINE Matrix4<float>::Matrix4(const float val)
 	m_data.cols[3] = _mm_set_ps(val, val, val, val);
 }
 
-INLINE Matrix4<float>::Matrix4(
+INLINE Matrix4SIMD::Matrix4SIMD(
 	const float x0, const float x1, const float x2, const float x3,
 	const float y0, const float y1, const float y2, const float y3,
 	const float z0, const float z1, const float z2, const float z3,
@@ -132,7 +127,7 @@ INLINE Matrix4<float>::Matrix4(
 	m_data.cols[3] = _mm_set_ps(w3, z3, y3, x3);
 }
 
-INLINE Matrix4<float>::Matrix4(const Matrix4<float>& other)
+INLINE Matrix4SIMD::Matrix4SIMD(const Matrix4SIMD& other) noexcept
 {
 	m_data.cols[0] = _mm_load_ps((float*)&other.m_data.cols[0]);
 	m_data.cols[1] = _mm_load_ps((float*)&other.m_data.cols[1]);
@@ -140,48 +135,48 @@ INLINE Matrix4<float>::Matrix4(const Matrix4<float>& other)
 	m_data.cols[3] = _mm_load_ps((float*)&other.m_data.cols[3]);
 }
 
-INLINE Matrix4<float>::Matrix4(Matrix4<float>&& other)
+INLINE Matrix4SIMD::Matrix4SIMD(Matrix4SIMD&& other) noexcept
 {
 	swap(*this, other);
 }
 
-INLINE Vector4<float> Matrix4<float>::raw(const umsize index) const noexcept
+INLINE Vector4SIMD Matrix4SIMD::raw(const umsize index) const noexcept
 {
 	switch (index)
 	{
 	case 0:
-		return Vector4<float>{ m_data.elems.x0, m_data.elems.x0, m_data.elems.x0, m_data.elems.x0 };
+		return Vector4SIMD{ m_data.elems.x0, m_data.elems.x0, m_data.elems.x0, m_data.elems.x0 };
 	case 1:
-		return Vector4<float>{ m_data.elems.y0, m_data.elems.y0, m_data.elems.y0, m_data.elems.y0 };
+		return Vector4SIMD{ m_data.elems.y0, m_data.elems.y0, m_data.elems.y0, m_data.elems.y0 };
 	case 2:
-		return Vector4<float>{ m_data.elems.z0, m_data.elems.z0, m_data.elems.z0, m_data.elems.z0 };
+		return Vector4SIMD{ m_data.elems.z0, m_data.elems.z0, m_data.elems.z0, m_data.elems.z0 };
 	case 3:
-		return Vector4<float>{ m_data.elems.w0, m_data.elems.w0, m_data.elems.w0, m_data.elems.w0 };
+		return Vector4SIMD{ m_data.elems.w0, m_data.elems.w0, m_data.elems.w0, m_data.elems.w0 };
 	default:
 		//#TODO_EXCEPTIONS Trigger an ensure.
-		return Vector4<float>{0};
+		return Vector4SIMD{0};
 	}
 }
 
-INLINE Vector4<float> Matrix4<float>::col(const umsize index) const noexcept
+INLINE Vector4SIMD Matrix4SIMD::col(const umsize index) const noexcept
 {
-	return Vector4<float>{m_data.cols[index]};
+	return Vector4SIMD{m_data.cols[index]};
 }
 
 
-INLINE float& Matrix4<float>::elem(const umsize raw, const umsize col)
+INLINE float& Matrix4SIMD::elem(const umsize raw, const umsize col)
 {
 	return ((float*)(&m_data.cols[col]))[raw];
 }
 
-INLINE float Matrix4<float>::elem(const umsize raw, const umsize col) const
+INLINE float Matrix4SIMD::elem(const umsize raw, const umsize col) const
 {
 	return ((float*)(&m_data.cols[col]))[raw];
 }
 
-INLINE Matrix4<float> Matrix4<float>::transpose() const noexcept
+INLINE Matrix4SIMD Matrix4SIMD::transpose() const noexcept
 {
-	return Matrix4<float>{
+	return Matrix4SIMD{
 		m_data.elems.x0, m_data.elems.y0, m_data.elems.z0, m_data.elems.w0,
 		m_data.elems.x1, m_data.elems.y1, m_data.elems.z1, m_data.elems.w1,
 		m_data.elems.x2, m_data.elems.y2, m_data.elems.z2, m_data.elems.w2,
@@ -189,23 +184,23 @@ INLINE Matrix4<float> Matrix4<float>::transpose() const noexcept
 	};
 }
 
-INLINE Matrix4<float>& Matrix4<float>::operator=(const Matrix4<float>& rhs)
+INLINE Matrix4SIMD& Matrix4SIMD::operator=(const Matrix4SIMD& rhs) noexcept
 {
-	Matrix4<float> ret{ rhs };
+	Matrix4SIMD ret{ rhs };
 	srt::swap(*this, ret);
 	return *this;
 }
 
-INLINE Matrix4<float>& Matrix4<float>::operator=(Matrix4<float>&& rhs)
+INLINE Matrix4SIMD& Matrix4SIMD::operator=(Matrix4SIMD&& rhs) noexcept
 {
 	srt::swap(*this, rhs);
 	return *this;
 }
 
-INLINE Matrix4<float> Matrix4<float>::operator*(const Matrix4<float>& rhs) const
+INLINE Matrix4SIMD Matrix4SIMD::operator*(const Matrix4SIMD& rhs) const
 {
-	Matrix4<float> matRows = this->transpose();
-	Matrix4<float> ret{ 0 };
+	Matrix4SIMD matRows = this->transpose();
+	Matrix4SIMD ret{ 0 };
 
 	__m128 tmp0;
 	__m128 tmp1;
@@ -229,14 +224,14 @@ INLINE Matrix4<float> Matrix4<float>::operator*(const Matrix4<float>& rhs) const
 	return ret;
 }
 
-INLINE Vector4<float> Matrix4<float>::operator*(const Vector4<float>& rhs) const
+INLINE Vector4SIMD Matrix4SIMD::operator*(const Vector4SIMD& rhs) const
 {
 	return rhs * this->transpose();
 }
 
-Vector4<float> Matrix4<float>::vectorMul(const Vector4<float>& lhs) const
+Vector4SIMD Matrix4SIMD::vectorMul(const Vector4SIMD& lhs) const
 {
-	Vector4<float> ret{ 0 };
+	Vector4SIMD ret{ 0 };
 
 	__m128 tmp0;
 	__m128 tmp1;
@@ -248,27 +243,25 @@ Vector4<float> Matrix4<float>::vectorMul(const Vector4<float>& lhs) const
 	return ret;
 }
 
-#else
 
-
-class Matrix4
+class Matrix4Arr
 {
 public:
 
-	Matrix4();					// Identity matrix
-	Matrix4(const float val);
-	Matrix4(const float x0, const float x1, const float x2, const float x3,
+	Matrix4Arr();					// Identity matrix
+	Matrix4Arr(const float val);
+	Matrix4Arr(const float x0, const float x1, const float x2, const float x3,
 			const float y0, const float y1, const float y2, const float y3,
 			const float z0, const float z1, const float z2, const float z3,
 			const float w0, const float w1, const float w2, const float w3);
-	//Matrix4(const float arr[4][4]);
-	Matrix4(const Matrix4& other);
-	Matrix4(Matrix4&& other);
+	//Matrix4Arr(const float arr[4][4]);
+	Matrix4Arr(const Matrix4Arr& other) noexcept;
+	Matrix4Arr(Matrix4Arr&& other) noexcept;
 
 	/*********************** GETTER ***********************/
 
-	Vector4 raw(const umsize index) noexcept;
-	Vector4 col(const umsize index) noexcept;
+	Vector4Arr raw(const umsize index) noexcept;
+	Vector4Arr col(const umsize index) noexcept;
 
 	float elem(const umsize raw, const umsize col);
 	float elem(const umsize raw, const umsize col) const;
@@ -280,24 +273,24 @@ public:
 		*
 		* @return The transposed matrix.
 		*/
-	Matrix4 transpose() const noexcept;
+	Matrix4Arr transpose() const noexcept;
 
 	/*********************** OPERATORS ***********************/
 
 	float* operator[](const umsize index);
 	const float* const operator[](const umsize index) const;
 
-	Matrix4& operator=(const Matrix4& rhs);
-	Matrix4& operator=(Matrix4&& rhs);
+	Matrix4Arr& operator=(const Matrix4Arr& rhs) noexcept;
+	Matrix4Arr& operator=(Matrix4Arr&& rhs) noexcept;
 
-	Matrix4 operator+(const Matrix4& rhs) const;
-	Matrix4 operator-(const Matrix4& rhs) const;
-	Matrix4 operator*(const Matrix4& rhs) const;
-	Vector4 operator*(const Vector4& rhs) const;
+	Matrix4Arr operator+(const Matrix4Arr& rhs) const;
+	Matrix4Arr operator-(const Matrix4Arr& rhs) const;
+	Matrix4Arr operator*(const Matrix4Arr& rhs) const;
+	Vector4Arr operator*(const Vector4& rhs) const;
 
 private:
 
-	Vector4 vectorMul(const Vector4& lhs) const;
+	Vector4Arr vectorMul(const Vector4Arr& lhs) const;
 
 	union u_matrix_data
 	{
@@ -323,12 +316,12 @@ private:
 
 public:
 
-	friend Vector4 operator*(const Vector4& lhs, const Matrix4& rhs)
+	friend Vector4 operator*(const Vector4& lhs, const Matrix4Arr& rhs)
 	{
 		return rhs.vectorMul(lhs);
 	};
 
-	friend void swap(Matrix4& a, Matrix4& b)
+	friend void swap(Matrix4Arr& a, Matrix4Arr& b)
 	{
 		srt::swap(a.m_data.raw, b.m_data.raw);
 	}
@@ -346,7 +339,7 @@ public:
 
 
 
-INLINE Matrix4::Matrix4()
+INLINE Matrix4Arr::Matrix4Arr()
 	: m_data{ 1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
@@ -355,7 +348,7 @@ INLINE Matrix4::Matrix4()
 }
 
 
-INLINE Matrix4::Matrix4(const float val)
+INLINE Matrix4Arr::Matrix4Arr(const float val)
 	: m_data{ val, val, val, val,
 				val, val, val, val,
 				val, val, val, val,
@@ -364,7 +357,7 @@ INLINE Matrix4::Matrix4(const float val)
 }
 
 
-INLINE Matrix4::Matrix4(const float x0, const float x1, const float x2, const float x3,
+INLINE Matrix4Arr::Matrix4Arr(const float x0, const float x1, const float x2, const float x3,
 	const float y0, const float y1, const float y2, const float y3,
 	const float z0, const float z1, const float z2, const float z3,
 	const float w0, const float w1, const float w2, const float w3)
@@ -376,7 +369,7 @@ INLINE Matrix4::Matrix4(const float x0, const float x1, const float x2, const fl
 }
 
 
-//INLINE Matrix4::Matrix4(const float arr[4][4])
+//INLINE Matrix4Arr::Matrix4Arr(const float arr[4][4])
 //	: m_data{ arr[0][0], arr[0][1], arr[0][2], arr[0][3],
 //			  arr[1][0], arr[1][1], arr[1][2], arr[1][3],
 //			  arr[2][0], arr[2][1], arr[2][2], arr[2][3],
@@ -385,7 +378,7 @@ INLINE Matrix4::Matrix4(const float x0, const float x1, const float x2, const fl
 //}
 
 
-INLINE Matrix4::Matrix4(const Matrix4& other)
+INLINE Matrix4Arr::Matrix4Arr(const Matrix4Arr& other) noexcept
 {
 	for (umsize i = 0; i < 4; ++i)
 	{
@@ -397,20 +390,20 @@ INLINE Matrix4::Matrix4(const Matrix4& other)
 }
 
 
-INLINE Matrix4::Matrix4(Matrix4&& other)
+INLINE Matrix4Arr::Matrix4Arr(Matrix4Arr&& other) noexcept
 {
 	srt::swap(*this, other);
 }
 
 
 
-INLINE Vector4 Matrix4::raw(const umsize index) noexcept
+INLINE Vector4Arr Matrix4Arr::raw(const umsize index) noexcept
 {
 	return index > 0 && index < 4 ? Vector4{ m_data.raw[index] } : Vector4{ };
 }
 
 
-INLINE Vector4 Matrix4::col(const umsize index) noexcept
+INLINE Vector4Arr Matrix4Arr::col(const umsize index) noexcept
 {
 	return index > 0 && index < 4 ?
 		Vector4{ m_data.raw[0][index], m_data.raw[1][index], m_data.raw[2][index], m_data.raw[3][index] } :
@@ -418,21 +411,21 @@ INLINE Vector4 Matrix4::col(const umsize index) noexcept
 }
 
 
-INLINE float Matrix4::elem(const umsize raw, const umsize col)
+INLINE float Matrix4Arr::elem(const umsize raw, const umsize col)
 {
 	return m_data.raw[raw][col];
 }
 
 
-INLINE float Matrix4::elem(const umsize raw, const umsize col) const
+INLINE float Matrix4Arr::elem(const umsize raw, const umsize col) const
 {
 	return m_data.raw[raw][col];
 }
 
 
-INLINE Matrix4 Matrix4::transpose() const noexcept
+INLINE Matrix4Arr Matrix4Arr::transpose() const noexcept
 {
-	return Matrix4{
+	return Matrix4Arr{
 		m_data.elems.x0, m_data.elems.y0, m_data.elems.z0, m_data.elems.w0,
 			m_data.elems.x1, m_data.elems.y1, m_data.elems.z1, m_data.elems.w1,
 			m_data.elems.x2, m_data.elems.y2, m_data.elems.z2, m_data.elems.w2,
@@ -441,36 +434,36 @@ INLINE Matrix4 Matrix4::transpose() const noexcept
 }
 
 
-INLINE Matrix4& Matrix4::operator=(const Matrix4& rhs)
+INLINE Matrix4Arr& Matrix4Arr::operator=(const Matrix4Arr& rhs) noexcept
 {
-	Matrix4 ret{ rhs };
+	Matrix4Arr ret{ rhs };
 	srt::swap(*this, ret);
 	return *this;
 }
 
 
-INLINE Matrix4& Matrix4::operator=(Matrix4&& rhs)
+INLINE Matrix4Arr& Matrix4Arr::operator=(Matrix4Arr&& rhs) noexcept
 {
 	srt::swap(*this, rhs);
 	return *this;
 }
 
 
-INLINE float* Matrix4::operator[](const umsize index)
+INLINE float* Matrix4Arr::operator[](const umsize index)
 {
 	return m_data.raw[index];
 }
 
 
-INLINE const float* const Matrix4::operator[](const umsize index) const
+INLINE const float* const Matrix4Arr::operator[](const umsize index) const
 {
 	return m_data.raw[index];
 }
 
 
-INLINE Matrix4 Matrix4::operator+(const Matrix4& rhs) const
+INLINE Matrix4Arr Matrix4Arr::operator+(const Matrix4Arr& rhs) const
 {
-	Matrix4 ret{ 0 };
+	Matrix4Arr ret{ 0 };
 
 	for (umsize i = 0; i < 4; ++i)
 	{
@@ -484,9 +477,9 @@ INLINE Matrix4 Matrix4::operator+(const Matrix4& rhs) const
 }
 
 
-INLINE Matrix4 Matrix4::operator-(const Matrix4& rhs) const
+INLINE Matrix4Arr Matrix4Arr::operator-(const Matrix4Arr& rhs) const
 {
-	Matrix4 ret{ 0 };
+	Matrix4Arr ret{ 0 };
 
 	for (umsize i = 0; i < 4; ++i)
 	{
@@ -500,9 +493,9 @@ INLINE Matrix4 Matrix4::operator-(const Matrix4& rhs) const
 }
 
 
-INLINE Matrix4 Matrix4::operator*(const Matrix4& rhs) const
+INLINE Matrix4Arr Matrix4Arr::operator*(const Matrix4Arr& rhs) const
 {
-	Matrix4 ret{ 0 };
+	Matrix4Arr ret{ 0 };
 
 	for (umsize i = 0; i < 4; ++i)
 	{
@@ -519,15 +512,15 @@ INLINE Matrix4 Matrix4::operator*(const Matrix4& rhs) const
 }
 
 
-INLINE Vector4 Matrix4::operator*(const Vector4& rhs) const
+INLINE Vector4Arr Matrix4Arr::operator*(const Vector4& rhs) const
 {
 	return rhs * this->transpose();
 }
 
 
-Vector4 Matrix4::vectorMul(const Vector4& lhs) const
+Vector4Arr Matrix4Arr::vectorMul(const Vector4Arr& lhs) const
 {
-	Vector4 ret{ };
+	Vector4Arr ret{ };
 
 	// Row vector * matrix
 	for (umsize i = 0; i < 4; ++i)
@@ -544,15 +537,15 @@ Vector4 Matrix4::vectorMul(const Vector4& lhs) const
 
 
 
+#ifdef MATH_USE_SIMD
+
+typedef Matrix4SIMD Matrix4;
+
+#else 
+
+typedef Matrix4Arr Matrix4;
+
 #endif
-
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//										SIMD IMPLEMENTATION										 //
-///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
