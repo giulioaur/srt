@@ -8,6 +8,8 @@
 #include "rendering/Material.hpp"
 #include "utility/Stopwatch.hpp"
 
+#include <array>
+
 void draw_and_render(const srt::ds::Scene& scene, const srt::rendering::Camera& camera,
 	const srt::s_rt_parameter& parameters);
 
@@ -29,7 +31,7 @@ int main(int argc, char** argv)
 	cornell_box();
 #endif // BENCHMARK
 
-    return 0;
+	return 0;
 }
 
 
@@ -117,15 +119,15 @@ void random_scene()
 	std::cout << "-------------------------------- RANDOM SCENE --------------------------------" << std::endl << std::endl;
 	std::cout << "-------------------------------- START BUILDING --------------------------------" << std::endl;
 	size_t length = 1250, side = sqrt(1000);
-	float radius = length / (side * 2), dradius = radius * 2;
-	float angularFrequency = 2 * M_PI * 0.1f;
+	float radius = length / (side * 2.f), dradius = radius * 2.f;
+	float angularFrequency = 2 * static_cast<float>(M_PI) * 0.1f;
 	std::vector<std::shared_ptr<srt::geometry::hitables::Hitable>> objects;
 	objects.reserve(side * side);
 
 	for (size_t i = 0; i < side * side; ++i) 
 	{
 		// Choose an x to be sure the circles are not intersected.
-		float x = i / side, z = i % side;
+		float x = static_cast<float>(i / side), z = static_cast<float>(i % side);
 		srt::geometry::Vector4 pos{ x * dradius, sin(x * angularFrequency) * radius, z * dradius, 0 };
 		std::shared_ptr<srt::rendering::Material> material = 
 			std::make_shared<srt::rendering::Diffuse>(
@@ -153,7 +155,7 @@ void random_scene()
 
 void cornell_box()
 {
-	using e_rect_type = srt::geometry::hitables::AARectangle::e_type;
+	using e_rect_type = srt::geometry::hitables::e_rect_type;
 	srt::utility::Stopwatch sw;
 
 	std::cout << "-------------------------------- CORNELL BOX --------------------------------" << std::endl << std::endl;
@@ -161,11 +163,10 @@ void cornell_box()
 	sw.start();
 	const auto whiteMaterial = std::make_shared<srt::rendering::Diffuse>(
 		std::make_shared<srt::rendering::Texture>(srt::rendering::Color{ 0.73f, 0.73f, 0.73f })
-	);
+		);
 	std::vector<std::shared_ptr<srt::geometry::hitables::Hitable>> objects{
 		// RIGHT WALL
-		std::make_shared<srt::geometry::hitables::AARectangle>(
-			e_rect_type::YZ,
+		std::make_shared<srt::geometry::hitables::AARectangle<e_rect_type::YZ>>(
 			0, 555,
 			0, 555,
 			555,
@@ -175,8 +176,7 @@ void cornell_box()
 			true
 		),
 		// LEFT WALL
-		std::make_shared<srt::geometry::hitables::AARectangle>(
-			e_rect_type::YZ,
+		std::make_shared<srt::geometry::hitables::AARectangle<e_rect_type::YZ>>(
 			0, 555,
 			0, 555,
 			0,
@@ -185,8 +185,7 @@ void cornell_box()
 					srt::rendering::Texture{ srt::rendering::Color{ 0.12f, 0.45f, 0.15f} }))
 		),
 		// FRONT WALL
-		std::make_shared<srt::geometry::hitables::AARectangle>(
-			e_rect_type::XY,
+		std::make_shared<srt::geometry::hitables::AARectangle<e_rect_type::XY>>(
 			0, 555,
 			0, 555,
 			555,
@@ -194,8 +193,7 @@ void cornell_box()
 			true
 		),
 		// ROOF
-		std::make_shared<srt::geometry::hitables::AARectangle>(
-			e_rect_type::XZ,
+		std::make_shared<srt::geometry::hitables::AARectangle<e_rect_type::XZ>>(
 			0, 555,
 			0, 555,
 			555,
@@ -203,34 +201,32 @@ void cornell_box()
 			true
 		),
 		// FLOOR
-		std::make_shared<srt::geometry::hitables::AARectangle>(
-			e_rect_type::XZ,
+		std::make_shared<srt::geometry::hitables::AARectangle<e_rect_type::XZ>>(
 			0, 555,
 			0, 555,
 			0,
 			whiteMaterial
 		),
 		// LIGHT
-		std::make_shared<srt::geometry::hitables::AARectangle>(
-			e_rect_type::XZ,
+		std::make_shared<srt::geometry::hitables::AARectangle<e_rect_type::XZ>>(
 			213, 343,
 			227, 332,
 			554,
 			std::make_shared<srt::rendering::DiffuseLight>(
 				srt::rendering::Color{ 15, 15, 15})
 		),
-		//// CUBE 1
-		//std::make_shared<srt::geometry::hitables::AABox>(
-		//	srt::geometry::Vector4{ 130, 0, 65, 0 },
-		//	srt::geometry::Vector4{ 295, 165, 230, 0 },
-		//	whiteMaterial
-		//),
-		//// CUBE 2
-		//std::make_shared<srt::geometry::hitables::AABox>(
-		//	srt::geometry::Vector4{ 265, 0, 295, 0 },
-		//	srt::geometry::Vector4{ 430, 330, 460, 0 },
-		//	whiteMaterial
-		//)
+		// CUBE 1
+		std::make_shared<srt::geometry::hitables::AABox>(
+			srt::geometry::Vector4{ 130, 0, 65, 0 },
+			srt::geometry::Vector4{ 295, 165, 230, 0 },
+			whiteMaterial
+		),
+		// CUBE 2
+		std::make_shared<srt::geometry::hitables::AABox>(
+			srt::geometry::Vector4{ 265, 0, 295, 0 },
+			srt::geometry::Vector4{ 430, 330, 460, 0 },
+			whiteMaterial
+		)
 	};
 	srt::ds::Scene scene{
 		580,

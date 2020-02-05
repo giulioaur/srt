@@ -34,14 +34,14 @@ AABB::AABB(Vector4&& min, Vector4&& max)
 
 bool AABB::intersect(const Ray& ray, float tmin, float tmax) const 
 {
-    for (uint8_t i = 0; i < 3; ++i) 
+    const Vector4 invD = ray.getInvD();
+    for (uint8_t i = 0; i < 3; ++i)
     {
         // Compute intersection point.
-        const float invD = 1 / ray.getDirection()[i];
-        float t0 = (m_min[i] - ray.getOrigin()[i]) * invD;
-        float t1 = (m_max[i] - ray.getOrigin()[i]) * invD;
+        float t0 = (m_min[i] - ray.getOrigin()[i]) * invD[i];
+        float t1 = (m_max[i] - ray.getOrigin()[i]) * invD[i];
 
-        if (invD < 0)
+        if (invD[i] < 0)
         {
             srt::swap(t0, t1);
         }

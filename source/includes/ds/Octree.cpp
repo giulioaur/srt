@@ -53,7 +53,7 @@ Octree::s_node::s_node(const std::vector<std::shared_ptr<geometry::hitables::Hit
 				}
 			);
 
-			children[i] = s_node{ containedObj, std::move(childBoxes[i]), minLeafObjs, minCubeSize, t0, t1 };
+			//children[i] = s_node{ containedObj, std::move(childBoxes[i]), minLeafObjs, minCubeSize, t0, t1 };
 		}
 	}
 	else
@@ -127,7 +127,8 @@ geometry::AABB Octree::getContainerBox(
 bool Octree::intersect(const geometry::Ray& ray, const float tmin, const float tmax, 
 	geometry::hitables::Hitable::s_hit_record& hit_record) const
 {
-	return m_root.hit(ray, tmin, tmax, hit_record);
+	float tmp;
+	return m_root.hit(ray, tmin, tmax, hit_record, tmp);
 }
 
 }

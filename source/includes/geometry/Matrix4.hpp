@@ -286,7 +286,7 @@ public:
 	Matrix4Arr operator+(const Matrix4Arr& rhs) const;
 	Matrix4Arr operator-(const Matrix4Arr& rhs) const;
 	Matrix4Arr operator*(const Matrix4Arr& rhs) const;
-	Vector4Arr operator*(const Vector4& rhs) const;
+	Vector4Arr operator*(const Vector4Arr& rhs) const;
 
 private:
 
@@ -316,7 +316,7 @@ private:
 
 public:
 
-	friend Vector4 operator*(const Vector4& lhs, const Matrix4Arr& rhs)
+	friend Vector4Arr operator*(const Vector4Arr& lhs, const Matrix4Arr& rhs)
 	{
 		return rhs.vectorMul(lhs);
 	};
@@ -399,15 +399,15 @@ INLINE Matrix4Arr::Matrix4Arr(Matrix4Arr&& other) noexcept
 
 INLINE Vector4Arr Matrix4Arr::raw(const umsize index) noexcept
 {
-	return index > 0 && index < 4 ? Vector4{ m_data.raw[index] } : Vector4{ };
+	return index > 0 && index < 4 ? Vector4Arr{ m_data.raw[index] } : Vector4Arr{ };
 }
 
 
 INLINE Vector4Arr Matrix4Arr::col(const umsize index) noexcept
 {
 	return index > 0 && index < 4 ?
-		Vector4{ m_data.raw[0][index], m_data.raw[1][index], m_data.raw[2][index], m_data.raw[3][index] } :
-		Vector4{ };
+		Vector4Arr{ m_data.raw[0][index], m_data.raw[1][index], m_data.raw[2][index], m_data.raw[3][index] } :
+		Vector4Arr{ };
 }
 
 
@@ -512,7 +512,7 @@ INLINE Matrix4Arr Matrix4Arr::operator*(const Matrix4Arr& rhs) const
 }
 
 
-INLINE Vector4Arr Matrix4Arr::operator*(const Vector4& rhs) const
+INLINE Vector4Arr Matrix4Arr::operator*(const Vector4Arr& rhs) const
 {
 	return rhs * this->transpose();
 }

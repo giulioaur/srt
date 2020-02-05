@@ -61,7 +61,7 @@ rendering::Color compute_color(const geometry::Ray& ray, const ds::Scene& scene,
 	return depth < parameters.max_bounces ? currentColor * parameters.backgroundColor : currentColor;
 }
 
-pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,
+pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera& camera,
 	const s_rt_parameter& parameters)
 {
 	using random = utility::Randomizer;

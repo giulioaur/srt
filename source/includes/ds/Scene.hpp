@@ -33,10 +33,10 @@ private:
 	const std::string m_name;
 	const int32_t m_height;
 	const int32_t m_width;
-	ds::BVH m_hitablesTree;
-	const std::vector<std::shared_ptr<geometry::hitables::Hitable>>& m_objects;
 	const float m_time0;
 	const float m_time1;
+	ds::BVH m_hitablesTree;
+	const std::vector<std::shared_ptr<geometry::hitables::Hitable>>& m_objects;
 };
 
 }

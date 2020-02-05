@@ -22,7 +22,7 @@ typedef struct rtp
 } s_rt_parameter;
 
 
-pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera camera,
+pixel_vector raytracing(const ds::Scene& scene, const rendering::Camera& camera,
 	const s_rt_parameter& parameters);
 
 

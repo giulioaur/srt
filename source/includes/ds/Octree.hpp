@@ -16,7 +16,7 @@ private:
 	struct s_node
 	{
 		const geometry::AABB box;
-		std::array<s_node, 8> children;
+		struct s_node* children;
 		std::vector<std::shared_ptr<geometry::hitables::Hitable>> containedObjs;
 		bool isLeaf;
 	

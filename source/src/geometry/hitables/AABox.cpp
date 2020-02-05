@@ -1,48 +1,73 @@
-#include "..\..\..\includes\geometry\hitables\AABox.hpp"
+#include "geometry/hitables/AABox.hpp"
 
 namespace srt::geometry::hitables
 {
 
 AABox::AABox(const Vector4& min, const Vector4& max, const std::shared_ptr<srt::rendering::Material> material)
-	: m_sides{ { AARectangle(AARectangle::e_type::XY, min.x(), max.x(), min.y(), max.y(), max.z(), material),
-                 AARectangle(AARectangle::e_type::XY, min.x(), max.x(), min.y(), max.y(), min.z(), material, true),
-                 AARectangle(AARectangle::e_type::XZ, min.x(), max.x(), min.z(), max.z(), max.y(), material),
-                 AARectangle(AARectangle::e_type::XZ, min.x(), max.x(), min.z(), max.z(), min.y(), material, true),
-                 AARectangle(AARectangle::e_type::YZ, min.y(), max.y(), min.z(), max.z(), max.x(), material),
-                 AARectangle(AARectangle::e_type::YZ, min.y(), max.y(), min.z(), max.z(), min.x(), material, true)} }
+	: m_min(min)
+    , m_max(max)
+    , m_material(material)
 {
 }
 
-bool AABox::intersect(const Ray& ray, const float tmin, const float tmax, s_hit_record& hit_record) const
+bool AABox::intersect(const Ray& ray, float tmin, float tmax, s_hit_record& hit_record) const
 {
-    Hitable::s_hit_record bestRecord;
-    bestRecord.t = tmax;
-
-    for (const auto& side : m_sides) 
+    const Vector4 invD = ray.getInvD();
+    for (uint8_t i = 0; i < 3; ++i)
     {
-        side.intersect(ray, tmin, bestRecord.t, bestRecord);
+        // Compute intersection point.
+        float t0 = (m_min[i] - ray.getOrigin()[i]) * invD[i];
+        float t1 = (m_max[i] - ray.getOrigin()[i]) * invD[i];
+
+        if (invD[i] < 0)
+        {
+            srt::swap(t0, t1);
+        }
+
+        // Compute the greater min and lower max.
+        tmin = t0 > tmin ? t0 : tmin;
+        tmax = t1 < tmax ? t1 : tmax;
+
+        // Return false if the intervals does not intersect.
+        if (tmax <= tmin)    return false;
     }
 
-    if (bestRecord.hit)
-    {
-        hit_record = bestRecord;
-        return true;
-    }
-
-    return false;
+    const Vector4 point = ray.getPoint(tmin);
+    hit_record = { true, tmin, this, point, getNormal(point), m_material, getTextureCoords(point) };
+    return true;
 }
 
 const AABB AABox::getAABB(const float t0, const float t1) const noexcept
 {
-    return AABB{
-        { m_sides[5].m_k, m_sides[3].m_k, m_sides[1].m_k, 0 },
-        { m_sides[4].m_k, m_sides[2].m_k, m_sides[0].m_k, 0 }
-    };
+    return AABB{ m_min, m_max };
 }
 
-const AARectangle& AABox::getFace(const e_face face) const noexcept
+Vector4 AABox::getNormal(const Vector4& p) const noexcept
 {
-    return m_sides[static_cast<size_t>(face)];
+    if (p.z() == m_min.z())       // FRONT FACE
+        return { 0, 0, -1, 0 };
+    else if (p.z() == m_max.z())  // BACK FACE
+        return { 0, 0, 1, 0 };
+    else if (p.x() == m_min.x())  // LEFT FACE
+        return { -1, 0, 0, 0 };
+    else if (p.x() == m_max.x())  // RIGHT FACE
+        return { 1, 0, -1, 0 };
+    else if (p.y() == m_min.y())  // BOTTOM FACE
+        return { 0, 0, -1, 0 };
+    else                            // UPPER FACE
+        return { 0, 0, 1, 0 };
+}
+
+TextureCoords AABox::getTextureCoords(const Vector4& p) const noexcept
+{
+    const Vector4 coords = (p - m_min) / (m_max - m_min);
+
+    if (p.z() == m_min.z() || p.z() == m_max.z())       // FRONT / BACK FACE
+        return { coords[0], coords[1] };
+    else if (p.x() == m_min.x() || p.x() == m_max.x())  // LEFT / RIGHT FACE
+        return { coords[1], coords[2] };
+    else                                            // BOTTOM / UPPER FACE
+        return { coords[0], coords[2] };
 }
 
 }

@@ -32,11 +32,6 @@ public:
     virtual const geometry::AABB getAABB(const float t0, const float t1) const noexcept override;
 	//virtual Vector4 getTextureCoords(const Vector4& p) const;
 
-	// OPERATORS
-
-	bool operator == (const Hitable& hitable) const;
-	bool operator != (const Hitable& hitable) const;
-
 
 private:
 

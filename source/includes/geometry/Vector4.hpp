@@ -9,6 +9,7 @@
 
 #include "srt.h"
 
+#include <algorithm>
 #include <cmath>
 #include <intrin.h>
 #include <sstream>
@@ -29,7 +30,6 @@ public:
 	Vector4SIMD();
 	Vector4SIMD(const float val);
 	Vector4SIMD(const float x, const float y, const float z, const float w);
-	Vector4SIMD(const __m128 raw);
 	//Vector4SIMD(float arr[]);
 	Vector4SIMD(const Vector4SIMD& other) noexcept;
 	Vector4SIMD(Vector4SIMD&& other) noexcept;
@@ -51,9 +51,10 @@ public:
 	float squaredMagnitude() const;
 	Vector4SIMD mul(const Vector4SIMD& rhs) const;
 	float dot(const Vector4SIMD& rhs) const;
+	Vector4SIMD normalize() const;
 
 	/*
-	 * This is a cross product in three-dimensional space. The function consider the two operand
+	 * @brief This is a cross product in three-dimensional space. The function consider the two operand
 	 * to be omogenous vector (a point will be considered as a vector).
 	 *
 	 * @args rhs The right operand.
@@ -61,6 +62,33 @@ public:
 	 * @return The perpendicular vector in three-dimensional space.
 	 */
 	Vector4SIMD cross(const Vector4SIMD& rhs) const;
+
+	/*
+	 * @brief Returns a vector composed by the least elements of the two vectors.
+	 *
+	 * @args rhs The other vector.
+	 *
+	 * @return A vector that contains the least elements of the two vectors in every position.
+	 */
+	Vector4SIMD min(const Vector4SIMD& rhs) const noexcept;
+
+	/*
+	 * @brief Returns a vector composed by the bigger elements of the two vectors.
+	 *
+	 * @args rhs The other vector.
+	 *
+	 * @return A vector that contains the bigger elements of the two vectors in every position.
+	 */
+	Vector4SIMD max(const Vector4SIMD& rhs) const noexcept;
+
+	/*
+	 * @brief Returns the least element of the vector.
+	 */
+	float min() const noexcept;
+	/*
+	 * @brief Returns the biggest element of the vector.
+	 */
+	float max() const noexcept;
 
 
 	/*********************** OPERATORS ***********************/
@@ -78,6 +106,7 @@ public:
 	Vector4SIMD operator-(const Vector4SIMD& rhs) const;
 	Vector4SIMD operator*(const float& rhs) const;
 	Vector4SIMD operator*=(const Vector4SIMD& rhs);
+	Vector4SIMD operator/(const float rhs) const;
 	Vector4SIMD operator/=(const float rhs);
 	float operator*(const Vector4SIMD& rhs) const;
 
@@ -90,6 +119,8 @@ public:
 
 private:
 
+	explicit Vector4SIMD(const __m128 raw);
+
 	union u_vector_data
 	{
 		__m128 raw;
@@ -101,6 +132,11 @@ private:
 	friend class Matrix4SIMD;
 
 public:
+
+	friend Vector4SIMD operator* (const float lhs, const Vector4SIMD& rhs)
+	{
+		return rhs * lhs;
+	}
 
 	friend void swap(Vector4SIMD& a, Vector4SIMD& b)
 	{
@@ -158,6 +194,11 @@ INLINE Vector4SIMD::Vector4SIMD(Vector4SIMD&& other) noexcept
 	swap(*this, other);
 }
 
+INLINE float Vector4SIMD::length() const
+{
+	return sqrt(squaredMagnitude());
+}
+
 INLINE float Vector4SIMD::squaredMagnitude() const
 {
 	return _mm_cvtss_f32(_mm_dp_ps(m_data.raw, m_data.raw, 0xF1));
@@ -175,6 +216,11 @@ INLINE float Vector4SIMD::dot(const Vector4SIMD& rhs) const
 	return _mm_cvtss_f32(_mm_dp_ps(m_data.raw, rhs.m_data.raw, 0xF1));
 }
 
+INLINE Vector4SIMD Vector4SIMD::normalize() const
+{
+	return operator/(length());
+}
+
 INLINE Vector4SIMD Vector4SIMD::cross(const Vector4SIMD& rhs) const
 {
 	return Vector4SIMD{
@@ -183,6 +229,26 @@ INLINE Vector4SIMD Vector4SIMD::cross(const Vector4SIMD& rhs) const
 			m_data.elems.x* rhs.m_data.elems.y + m_data.elems.y * rhs.m_data.elems.x,
 			0
 	};
+}
+
+INLINE Vector4SIMD Vector4SIMD::min(const Vector4SIMD& rhs) const noexcept
+{
+	return Vector4SIMD{ _mm_min_ps(m_data.raw, rhs.m_data.raw) };
+}
+
+INLINE Vector4SIMD Vector4SIMD::max(const Vector4SIMD& rhs) const noexcept
+{
+	return Vector4SIMD{ _mm_max_ps(m_data.raw, rhs.m_data.raw) };;
+}
+
+INLINE float Vector4SIMD::min() const noexcept
+{
+	return 0.0f;
+}
+
+INLINE float Vector4SIMD::max() const noexcept
+{
+	return 0.0f;
 }
 
 INLINE float& Vector4SIMD::operator[](const umsize index)
@@ -242,8 +308,15 @@ INLINE float Vector4SIMD::operator*(const Vector4SIMD& rhs) const
 
 INLINE Vector4SIMD Vector4SIMD::operator*=(const Vector4SIMD& rhs)
 {
-	*this = mul(rhs);
+	m_data.raw = _mm_mul_ps(m_data.raw, rhs.m_data.raw);
 	return *this;
+}
+
+INLINE Vector4SIMD Vector4SIMD::operator/(const float rhs) const
+{
+	Vector4SIMD ret;
+	ret.m_data.raw = _mm_div_ps(m_data.raw, _mm_set1_ps(rhs));
+	return ret;
 }
 
 INLINE Vector4SIMD Vector4SIMD::operator/=(const float rhs)
@@ -313,7 +386,34 @@ public:
 	 *
 	 * @return The perpendicular vector in three-dimensional space.
 	 */
-	Vector4Arr cross(const Vector4Arr& rhs) const;		
+	Vector4Arr cross(const Vector4Arr& rhs) const;	
+
+	/*
+	 * @brief Returns a vector composed by the least elements of the two vectors.
+	 *
+	 * @args rhs The other vector.
+	 *
+	 * @return A vector that contains the least elements of the two vectors in every position.
+	 */
+	Vector4Arr min(const Vector4Arr& rhs) const noexcept;
+
+	/*
+	 * @brief Returns a vector composed by the bigger elements of the two vectors.
+	 *
+	 * @args rhs The other vector.
+	 *
+	 * @return A vector that contains the bigger elements of the two vectors in every position.
+	 */
+	Vector4Arr max(const Vector4Arr& rhs) const noexcept;
+
+	/*
+	 * @brief Returns the least element of the vector.
+	 */
+	float min() const noexcept;
+	/*
+	 * @brief Returns the biggest element of the vector.
+	 */
+	float max() const noexcept;
 
 	std::string toString() const;
 
@@ -338,11 +438,12 @@ public:
 	float operator*(const Vector4Arr& rhs) const;					// Dot product.
 	Vector4Arr operator*=(const Vector4Arr& rhs);					// Elementwise product.
 	Vector4Arr operator/(const float rhs) const;					// Scalar division.
+	Vector4Arr operator/(const Vector4Arr& rhs) const;					// Elementwise division.
 	Vector4Arr operator/=(const float rhs);							// Scalar division.
 
 private:
 
-	union u_vector_data
+	ALIGN(128) union u_vector_data
 	{
 		float raw[4];
 		struct {
@@ -360,7 +461,7 @@ private:
 
 public:
 
-	friend Vector4Arr operator* (const float lhs, const Vector4Arr rhs)
+	friend Vector4Arr operator* (const float lhs, const Vector4Arr& rhs)
 	{
 		return rhs * lhs;
 	}
@@ -466,6 +567,36 @@ INLINE Vector4Arr Vector4Arr::cross(const Vector4Arr& rhs) const
 		m_data.elems.x * rhs.m_data.elems.y + m_data.elems.y * rhs.m_data.elems.x,
 		0
 	};
+}
+
+INLINE Vector4Arr Vector4Arr::min(const Vector4Arr& rhs) const noexcept
+{
+	return Vector4Arr{
+		fmin(m_data.elems.x, rhs.m_data.elems.x),
+		fmin(m_data.elems.y, rhs.m_data.elems.y),
+		fmin(m_data.elems.z, rhs.m_data.elems.z),
+		fmin(m_data.elems.w, rhs.m_data.elems.w)
+	};
+}
+
+INLINE Vector4Arr Vector4Arr::max(const Vector4Arr& rhs) const noexcept
+{
+	return Vector4Arr{
+		fmax(m_data.elems.x, rhs.m_data.elems.x),
+		fmax(m_data.elems.y, rhs.m_data.elems.y),
+		fmax(m_data.elems.z, rhs.m_data.elems.z),
+		fmax(m_data.elems.w, rhs.m_data.elems.w)
+	};
+}
+
+INLINE float Vector4Arr::min() const noexcept
+{
+	return std::min({ m_data.elems.x, m_data.elems.y, m_data.elems.z });
+}
+
+INLINE float Vector4Arr::max() const noexcept
+{
+	return std::max({ m_data.elems.x, m_data.elems.y, m_data.elems.z });
 }
 
 INLINE std::string Vector4Arr::toString() const
@@ -591,6 +722,16 @@ INLINE Vector4Arr Vector4Arr::operator/(const float rhs) const
 		m_data.elems.y / rhs,
 		m_data.elems.z / rhs,
 		m_data.elems.w / rhs,
+	};
+}
+
+INLINE Vector4Arr Vector4Arr::operator/(const Vector4Arr& rhs) const
+{
+	return Vector4Arr{
+		m_data.elems.x / rhs.m_data.elems.x,
+		m_data.elems.y / rhs.m_data.elems.y,
+		m_data.elems.z / rhs.m_data.elems.z,
+		m_data.elems.w / rhs.m_data.elems.w,
 	};
 }
 

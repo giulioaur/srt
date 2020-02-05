@@ -11,19 +11,6 @@ Sphere::Sphere(const Vector4& center, const float radius, const std::shared_ptr<
 	, m_radius(radius)
 	, m_material(material) { }
 
-    
-bool Sphere::operator == (const Hitable& hitable) const {
-    if (const Sphere* sphere = dynamic_cast<Sphere const*>(&hitable))
-        return m_center == sphere->m_center && m_radius == sphere->m_radius;
-    return false;
-}
-
-bool Sphere::operator != (const Hitable& hitable) const {
-    if (const Sphere* sphere = dynamic_cast<Sphere const*>(&hitable))
-        return m_center != sphere->m_center || m_radius != sphere->m_radius;
-    return false;
-}
-
 bool Sphere::intersect(const Ray& ray, const float tmin, const float tmax,
     Hitable::s_hit_record& hit_record) const 
 {

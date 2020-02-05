@@ -38,7 +38,7 @@ struct axis_comparator
         const std::shared_ptr<geometry::hitables::Hitable>& hit1) const
     {
         short axis = static_cast<short>(utility::Randomizer::randomRange(0, 2.99f));
-        auto box0 = hit0->getAABB(0, 0), box1 = hit0->getAABB(0, 0);
+        auto box0 = hit0->getAABB(0, 0), box1 = hit1->getAABB(0, 0);
 
         return box0.getMin()[axis] > box1.getMin()[axis];
     }

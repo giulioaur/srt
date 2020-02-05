@@ -24,7 +24,7 @@ public:
 		: m_origin(origin)
 		, m_direction(direction.normalize())
 		, m_time(time)
-		, m_invD({ 1/ direction[0], 1 / direction[1], 1 / direction[2], 0}) {}
+		, m_invD{ 1/ m_direction[0], 1 / m_direction[1], 1 / m_direction[2], 0} {}
 
 	/**
 	 * @brief Creates a new ray equal to an old one.
@@ -56,10 +56,10 @@ public:
 
 private:
 
+	float m_time;
 	Vector4 m_origin;
 	Vector4 m_direction;
 	Vector4 m_invD;			// Used with AABB collisions.
-	float m_time;
 
 public:
 
