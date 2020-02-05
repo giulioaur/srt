@@ -69,4 +69,42 @@ AABB AABB::getSurroundingBox(const AABB& box) const
                  0 };
     return AABB{ lrc, ulc };
 }
+
+bool AABB::collide(const AABB& box) const
+{
+	// Two boxes collides only if all the three (min -> max) intervals overlap.
+	// This way we check the sign of the multiplication between the two max - min differences.
+	// If all of them have negative sign ( less than / greater than proportion are not respected)
+	// or zero (they have the same coordinate) then all three axes overlap).
+	const Vector4 diff = (m_min - box.getMin()).mul(m_max - box.getMax());
+
+	return diff[0] <= 0 && diff[1] <= 0 && diff[2] <= 0;
+}
+
+std::array<float, 2> AABB::getCollisionPoints(const Ray& ray, float tmin, float tmax) const
+{
+	float currMin = tmin, currMax = tmax;
+	for (uint8_t i = 0; i < 3; ++i)
+	{
+		// Compute intersection point.
+		const float invD = 1 / ray.getDirection()[i];
+		float t0 = (m_min[i] - ray.getOrigin()[i]) * invD;
+		float t1 = (m_max[i] - ray.getOrigin()[i]) * invD;
+
+		if (invD < 0)
+		{
+			srt::swap(t0, t1);
+		}
+
+		// Compute the greater min and lower max.
+		currMin = t0 > currMin ? t0 : currMin;
+		currMax = t1 < currMax ? t1 : currMax;
+
+		// Return false if the intervals does not intersect.
+		if (currMax <= currMin)    return { -1, -1 };
+	}
+
+	return { tmin, tmax };
+}
+
 }

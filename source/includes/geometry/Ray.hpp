@@ -23,7 +23,8 @@ public:
 	Ray(const Vector4& origin, const Vector4& direction, const float time = 1) 
 		: m_origin(origin)
 		, m_direction(direction.normalize())
-		, m_time(time) {}
+		, m_time(time)
+		, m_invD({ 1/ direction[0], 1 / direction[1], 1 / direction[2], 0}) {}
 
 	/**
 	 * @brief Creates a new ray equal to an old one.
@@ -33,10 +34,12 @@ public:
 	Ray(const Ray &old) 
 		: m_origin(old.m_origin)
 		, m_direction(old.m_direction)
-		, m_time(old.m_time) {}
+		, m_invD(old.m_invD)
+		, m_time(old.m_time){}
 
 	const Vector4& getOrigin() const { return this->m_origin;	}
 	const Vector4& getDirection() const { return this->m_direction; }
+	const Vector4& getInvD() const { return this->m_invD; }
 	float getTime() const { return this->m_time;	}
 
 	/**
@@ -55,6 +58,7 @@ private:
 
 	Vector4 m_origin;
 	Vector4 m_direction;
+	Vector4 m_invD;			// Used with AABB collisions.
 	float m_time;
 
 public:
@@ -63,6 +67,7 @@ public:
 	{
 		srt::swap(a.m_origin, b.m_origin);
 		srt::swap(a.m_direction, b.m_direction);
+		srt::swap(a.m_invD, b.m_invD);
 		srt::swap(a.m_time, b.m_time);
 	}
 
