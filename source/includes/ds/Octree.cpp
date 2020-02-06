@@ -4,11 +4,10 @@
 namespace srt::ds
 {
 
-std::array<geometry::AABB, 8> split(const geometry::AABB& box)
+std::array<geometry::AABB, 8> split(const geometry::AABB& box, const geometry::Vector4& center)
 {
 	const geometry::Vector4 min = box.getMin();
 	const geometry::Vector4 max = box.getMax();
-	const geometry::Vector4 center = min + box.getSize() / 2;
 
 	return {
 		// LEFT - BOTTOM - FRONT
@@ -30,16 +29,26 @@ std::array<geometry::AABB, 8> split(const geometry::AABB& box)
 	};
 }
 
+size_t getChildContains(const geometry::Vector4& point, const geometry::Vector4& center)
+{
+	size_t index = 0;
+	index |= ((point.z() > center.z()) << 3); // FRONT - BACK
+	index |= ((point.y() > center.y()) << 2); // UPPER - BOTTOM
+	index |= point.x() > center.x();		  // LEFT - RIGHT
+	return index;
+}
+
 
 Octree::s_node::s_node(const std::vector<std::shared_ptr<geometry::hitables::Hitable>>& objects,
 	geometry::AABB&& box, const size_t minLeafObjs, const float minCubeSize, const float t0, const float t1)
-	: box(box)
-	, isLeaf(false)
+	: isLeaf(false)
+	, center(box.getMin() + box.getSize() / 2)
+	, box(box)
 {
 	// Be sure the child can be further divided, if not this become a leaf node.
 	if (objects.size() > minLeafObjs)
 	{
-		std::array<geometry::AABB, 8> childBoxes = split(box);
+		std::array<geometry::AABB, 8> childBoxes = split(box, center);
 
 		for (size_t i = 0; i < 8; ++i)
 		{
@@ -53,7 +62,7 @@ Octree::s_node::s_node(const std::vector<std::shared_ptr<geometry::hitables::Hit
 				}
 			);
 
-			//children[i] = s_node{ containedObj, std::move(childBoxes[i]), minLeafObjs, minCubeSize, t0, t1 };
+			children[i] = new s_node{ containedObj, std::move(childBoxes[i]), minLeafObjs, minCubeSize, t0, t1 };
 		}
 	}
 	else
@@ -66,25 +75,39 @@ Octree::s_node::s_node(const std::vector<std::shared_ptr<geometry::hitables::Hit
 bool Octree::s_node::hit(const geometry::Ray& ray, const float tmin, const float tmax, 
 	geometry::hitables::Hitable::s_hit_record& hit_record, float& outT) const
 {
+	std::array<float, 2> collisionPoints;
+	if (!box.getCollisionPoints(ray, tmin, tmax, collisionPoints))
+	{
+		return false;
+	}
+	outT = collisionPoints[1];
+
 	if (isLeaf)
 	{
 		// If an object inside is hit, stop the search, otherwise return exit point.
-		if (hitContent(ray, tmin, tmax, hit_record))
-		{
-			return true;
-		}
-
-		const auto collisionPoints = box.getCollisionPoints(ray, tmin, tmax);
-		outT = collisionPoints[1];
-		return false;
+		return hitContent(ray, tmin, tmax, hit_record);
 	}
 	else
 	{
-		// Check if the origin is contained in a child?
+		float nextT;
+		geometry::Vector4 nextPoint = collisionPoints[0] >= 0 ?
+			ray.getPoint(collisionPoints[0]) : ray.getOrigin();
 
+		// Do not check all the child, instead check for the child that contains the entering point,
+		// if no collision is found here, go to the next child based on where is the exit point of 
+		// the previous one. Once the exit point is on the box border, stop and return to the father.
+		while (box.isInside(nextPoint))
+		{
+			if (children[getChildContains(nextPoint, center)]->hit(ray, tmin, tmax, hit_record, nextT))
+			{
+				return true;
+			}
+
+			nextPoint = ray.getPoint(nextT);
+		}
 	}
 
-	return hit_record.hit;
+	return false;
 }
 
 bool Octree::s_node::hitContent(const geometry::Ray& ray, const float tmin, const float tmax,

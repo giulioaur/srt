@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 	random_scene();
 	cornell_box();
 #else
-	cornell_box();
+	base_scene();
 #endif // BENCHMARK
 
 	return 0;
@@ -122,9 +122,9 @@ void random_scene()
 	float radius = length / (side * 2.f), dradius = radius * 2.f;
 	float angularFrequency = 2 * static_cast<float>(M_PI) * 0.1f;
 	std::vector<std::shared_ptr<srt::geometry::hitables::Hitable>> objects;
-	objects.reserve(side * side);
+	objects.reserve(1000);
 
-	for (size_t i = 0; i < side * side; ++i) 
+	for (size_t i = 0; i < 1000; ++i)
 	{
 		// Choose an x to be sure the circles are not intersected.
 		float x = static_cast<float>(i / side), z = static_cast<float>(i % side);

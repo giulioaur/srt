@@ -46,7 +46,16 @@ public:
 	AABB getSurroundingBox(const AABB& box) const;
 
 	bool collide(const AABB& box) const;
-	std::array<float, 2> getCollisionPoints(const Ray& ray, float tmin, float tmax) const;
+	bool getCollisionPoints(const Ray& ray, float tmin, float tmax, std::array<float, 2>& points) const;
+
+	/**
+	 * @brief Checks if a point is inside on the box. Points on the box faces will return false.
+	 *
+	 * @param point The point to check.
+	 *
+	 * @return true if the point is inside the box. False if it is outside or on the borders.
+	 */
+	bool isInside(const Vector4& point) const noexcept;
 
 private:
 

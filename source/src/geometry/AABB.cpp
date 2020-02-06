@@ -81,7 +81,7 @@ bool AABB::collide(const AABB& box) const
 	return diff[0] <= 0 && diff[1] <= 0 && diff[2] <= 0;
 }
 
-std::array<float, 2> AABB::getCollisionPoints(const Ray& ray, float tmin, float tmax) const
+bool AABB::getCollisionPoints(const Ray& ray, float tmin, float tmax, std::array<float, 2>& points) const
 {
 	float currMin = tmin, currMax = tmax;
 	for (uint8_t i = 0; i < 3; ++i)
@@ -101,10 +101,18 @@ std::array<float, 2> AABB::getCollisionPoints(const Ray& ray, float tmin, float 
 		currMax = t1 < currMax ? t1 : currMax;
 
 		// Return false if the intervals does not intersect.
-		if (currMax <= currMin)    return { -1, -1 };
+		if (currMax <= currMin)    return false;
 	}
 
-	return { tmin, tmax };
+	points[0] = tmin; points[1] = tmax;
+	return true;
+}
+
+bool AABB::isInside(const Vector4& point) const noexcept
+{
+	return point.x() < m_min.x() && point.x() > m_min.x() &&
+		   point.y() < m_min.y() && point.y() > m_min.y() &&
+		   point.z() < m_min.z() && point.z() > m_min.z();
 }
 
 }

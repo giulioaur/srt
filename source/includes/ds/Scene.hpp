@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "ds/BVH.hpp"
+#include "ds/Octree.hpp"
 #include "geometry/hitables/Hitable.hpp"
 
 namespace srt::ds
@@ -36,6 +37,7 @@ private:
 	const float m_time0;
 	const float m_time1;
 	ds::BVH m_hitablesTree;
+	ds::Octree m_hitablesOctree;
 	const std::vector<std::shared_ptr<geometry::hitables::Hitable>>& m_objects;
 };
 

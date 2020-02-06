@@ -15,10 +15,11 @@ private:
 
 	struct s_node
 	{
-		const geometry::AABB box;
-		struct s_node* children;
-		std::vector<std::shared_ptr<geometry::hitables::Hitable>> containedObjs;
 		bool isLeaf;
+		std::vector<std::shared_ptr<geometry::hitables::Hitable>> containedObjs;
+		const geometry::Vector4 center;
+		const geometry::AABB box;
+		struct std::array<s_node*, 8> children;
 	
 		s_node(const std::vector<std::shared_ptr<geometry::hitables::Hitable>>& objects,
 			geometry::AABB&& box, const size_t minLeafObjs, const float minCubeSize, 
